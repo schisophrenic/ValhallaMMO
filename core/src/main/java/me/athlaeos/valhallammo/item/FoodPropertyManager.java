@@ -176,8 +176,45 @@ public class FoodPropertyManager {
             }
             return classes.isEmpty() ? null : classes;
         }
+        // Crop & Kettle custom dishes are commonly backed by POISONOUS_POTATO.
+        // Classify from the item_model component, not the backing Material, or
+        // ValhallaMMO would incorrectly treat ordinary meals as SPOILED.
+        Collection<FoodClass> cropAndKettleClasses = getCropAndKettleFoodClasses(meta);
+        if (cropAndKettleClasses != null) return cropAndKettleClasses;
         FoodProperties properties = defaultProperties.get(i.getType());
         return properties == null ? null : properties.types;
+    }
+
+    /**
+     * Recognizes Crop & Kettle models on modern servers without requiring its
+     * datapack or modern item-model APIs at compile time (1.19+ compatibility).
+     *
+     * An empty collection is intentional for an unclassified CnK meal: it has
+     * no food-type buffs until classified, but is not falsely SPOILED merely
+     * because the datapack uses POISONOUS_POTATO as its backing item.
+     */
+    private static Collection<FoodClass> getCropAndKettleFoodClasses(ItemMeta meta) {
+        try {
+            Object key = meta.getClass().getMethod("getItemModel").invoke(meta);
+            if (!(key instanceof NamespacedKey model) || !model.getNamespace().equals("cnk")) return null;
+
+            return switch (model.getKey()) {
+                case "tomato", "lettuce" -> Set.of(FoodClass.VEGETABLE, FoodClass.RAW);
+                case "chili_pepper" -> Set.of(FoodClass.VEGETABLE, FoodClass.SEASONING, FoodClass.RAW);
+                case "corn" -> Set.of(FoodClass.VEGETABLE, FoodClass.GRAIN, FoodClass.RAW);
+                case "rice", "dough" -> Set.of(FoodClass.GRAIN, FoodClass.RAW);
+                case "grapes" -> Set.of(FoodClass.FRUIT, FoodClass.RAW);
+                case "cinnamon" -> Set.of(FoodClass.SEASONING);
+                case "bread" -> Set.of(FoodClass.GRAIN);
+                case "coffee" -> Set.of(FoodClass.BEVERAGE);
+                case "beef_wellington" -> Set.of(FoodClass.MEAT, FoodClass.GRAIN);
+                case "foodie_feast" -> Set.of(FoodClass.MEAT, FoodClass.VEGETABLE, FoodClass.GRAIN);
+                default -> Collections.emptySet();
+            };
+        } catch (ReflectiveOperationException ignored) {
+            // Older supported server versions have no item_model component.
+            return null;
+        }
     }
 
     public static void setFoodClasses(ItemMeta meta, Collection<FoodClass> foodClasses){
