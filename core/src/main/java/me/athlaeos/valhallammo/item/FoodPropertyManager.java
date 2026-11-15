@@ -195,7 +195,7 @@ public class FoodPropertyManager {
      */
     private static Collection<FoodClass> getCropAndKettleFoodClasses(ItemMeta meta) {
         try {
-            Object key = meta.getClass().getMethod("getItemModel").invoke(meta);
+            Object key = ItemMeta.class.getMethod("getItemModel").invoke(meta);
             if (!(key instanceof NamespacedKey model) || !model.getNamespace().equals("cnk")) return null;
 
             return switch (model.getKey()) {
