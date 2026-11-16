@@ -12,74 +12,43 @@ import java.util.zip.ZipOutputStream;
 
 public class Zipper {
     public static void zipFolder(String sourceDirPath, String zipFilePath) {
-        try {
-            FileOutputStream fileStream = new FileOutputStream(zipFilePath);
-            ZipOutputStream zipFile = new ZipOutputStream(fileStream);
-            File zippingFile = new File(sourceDirPath);
-            zipFile(zippingFile, zippingFile.getName(), zipFile);
-            zipFile.close();
-            fileStream.close();
+        try (ZipOutputStream output = new ZipOutputStream(new FileOutputStream(zipFilePath))) {
+            File source = new File(sourceDirPath);
+            if (source.isDirectory()) {
+                File[] children = source.listFiles();
+                if (children == null) throw new IOException("Could not read " + sourceDirPath);
+                // Place the directory's contents at the ZIP root, not the directory itself.
+                for (File child : children) {
+                    addToZip(child, child.getName(), output);
+                }
+            } else {
+                addToZip(source, source.getName(), output);
+            }
         } catch (IOException ex) {
             ValhallaMMO.logWarning("Could not zip resource pack");
             ex.printStackTrace();
         }
     }
 
-    private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipFileOutputStream) throws IOException {
-        byte[] bytes = new byte[1024];
-        int length;
-        if (fileToZip.isDirectory()) {
-            File[] children = fileToZip.listFiles();
-
-            assert children != null;
-
-            length = children.length;
-
-            for(int var7 = 0; var7 < length; ++var7) {
-                File childFile = children[var7];
-                zipSubFile(childFile, childFile.getName(), zipFileOutputStream);
+    private static void addToZip(File source, String entryName, ZipOutputStream output) throws IOException {
+        if (source.isDirectory()) {
+            File[] children = source.listFiles();
+            if (children == null) throw new IOException("Could not read " + source);
+            for (File child : children) {
+                addToZip(child, entryName + "/" + child.getName(), output);
             }
-        } else {
-            try (FileInputStream fis = new FileInputStream(fileToZip)){
-                ZipEntry zipEntry = new ZipEntry(fileName);
-                zipFileOutputStream.putNextEntry(zipEntry);
-
-                while((length = fis.read(bytes)) > 0) {
-                    zipFileOutputStream.write(bytes, 0, length);
-                }
-            }
+            return;
         }
-    }
 
-    private static void zipDirectory(File fileToZip, String fileName, ZipOutputStream zipFileOutputStream) throws IOException {
-        if (!fileToZip.isDirectory()) return;
-        File[] children = fileToZip.listFiles();
-        if (children == null) return;
-        for (File childFile : children) {
-            zipSubFile(childFile, fileName + "/" + childFile.getName(), zipFileOutputStream);
-        }
-    }
-
-    private static void zipSubFile(File fileToZip, String fileName, ZipOutputStream zipFileOutputStream) throws IOException {
-        if (fileToZip.isDirectory()) {
-            zipDirectory(fileToZip, fileName, zipFileOutputStream);
-        } else {
-            byte[] bytes = new byte[1024];
-            try (FileInputStream fis = new FileInputStream(fileToZip)){
-                ZipEntry zipEntry = new ZipEntry(fileName);
-                zipFileOutputStream.putNextEntry(zipEntry);
-
-                int length;
-                while((length = fis.read(bytes)) > 0) {
-                    zipFileOutputStream.write(bytes, 0, length);
-                }
-            }
+        try (FileInputStream input = new FileInputStream(source)) {
+            output.putNextEntry(new ZipEntry(entryName));
+            input.transferTo(output);
+            output.closeEntry();
         }
     }
 
     public static void unzipFolder(String zipFile, File destination){
         try (ZipInputStream in = new ZipInputStream(new FileInputStream(zipFile))){
-            byte[] buffer = new byte[1024];
             ZipEntry entry = in.getNextEntry();
             while (entry != null){
                 File newFile = newFile(destination, entry);
@@ -89,12 +58,9 @@ public class Zipper {
                     File parent = newFile.getParentFile();
                     if (!parent.isDirectory() && !parent.mkdirs()) throw new IOException("Could not make directory for zipped file " + entry.getName());
 
-                    FileOutputStream out = new FileOutputStream(newFile);
-                    int read;
-                    while ((read = in.read(buffer)) > 0){
-                        out.write(buffer, 0, read);
+                    try (FileOutputStream out = new FileOutputStream(newFile)) {
+                        in.transferTo(out);
                     }
-                    out.close();
                 }
                 entry = in.getNextEntry();
             }
