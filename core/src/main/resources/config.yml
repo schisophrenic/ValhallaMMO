@@ -567,3 +567,17 @@ model_data_tinker_view: 3511002
 # If true, items crafted with a custom crafting method will be dropped on top of the crafting block. If false, they will
 # be added to the player's inventory.
 craft_item_drop: true
+enchantment_priority:
+  defense_order: [protection, magic_protection, projectile_protection, blast_protection, fire_protection]
+  offense_order: [sharpness, smite, bane_of_arthropods]
+  enabled: true
+  defense:
+    '1': [10]
+    '2': [5, 5]
+    '3': [5, 3, 2]
+    '4': [4, 2, 2, 2]
+    '5': [3, 2, 2, 2, 1]
+  offense:
+    '1': [10]
+    '2': [5, 5]
+    '3': [5, 3, 2]
