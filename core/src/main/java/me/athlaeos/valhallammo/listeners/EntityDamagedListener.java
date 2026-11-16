@@ -11,6 +11,7 @@ import me.athlaeos.valhallammo.playerstats.profiles.ProfileCache;
 import me.athlaeos.valhallammo.playerstats.profiles.implementations.PowerProfile;
 import me.athlaeos.valhallammo.potioneffects.EffectResponsibility;
 import me.athlaeos.valhallammo.utility.EntityUtils;
+import me.athlaeos.valhallammo.utility.ResistanceCalculator;
 import me.athlaeos.valhallammo.utility.StringUtils;
 import me.athlaeos.valhallammo.utility.Timer;
 import me.athlaeos.valhallammo.utility.Utils;
@@ -196,20 +197,22 @@ public class EntityDamagedListener implements Listener {
 
         CustomDamageType customDamageType = CustomDamageType.getCustomType(damageCause);
 
-        if (customDamageType != null) {
-            if (e.getEntity() instanceof LivingEntity l){
-                double resistance = customDamageType.resistance() == null ? 0 : AccumulativeStatManager.getCachedRelationalStats(customDamageType.resistance(), l, lastDamager, 10000, true);
-                e.setDamage(Math.max(0, e.getDamage() * (1 - resistance)));
-            }
-        }
+        if (!(e.getEntity() instanceof LivingEntity l)) return e.getDamage();
 
-        if (e.getEntity() instanceof LivingEntity l){
-            if (!trueDamage.contains(damageCause)){
-                double generalResistance = AccumulativeStatManager.getCachedRelationalStats("DAMAGE_RESISTANCE", l, lastDamager, 10000, true);
-                e.setDamage(Math.max(0, e.getDamage() * (1 - generalResistance)));
-            }
-        } else return e.getDamage();
+        double typeResistance = customDamageType == null || customDamageType.resistance() == null ? 0
+                : AccumulativeStatManager.getCachedRelationalStats(customDamageType.resistance(), l, lastDamager, 10000, true);
+        boolean trueDamageType = trueDamage.contains(damageCause);
+        double generalResistance = trueDamageType ? 0
+                : AccumulativeStatManager.getCachedRelationalStats("DAMAGE_RESISTANCE", l, lastDamager, 10000, true);
 
+        // Resistances keep their original stacking when the attacker has no penetration.
+        // True/environmental damage is not strengthened by a weapon's penetration stat.
+        double shred = trueDamageType || lastDamager == null ? 0
+                : AccumulativeStatManager.getCachedRelationalStats("RESISTANCE_SHRED", l, lastDamager, 10000, true);
+        double pierce = trueDamageType || lastDamager == null ? 0
+                : AccumulativeStatManager.getCachedRelationalStats("RESISTANCE_PIERCE", l, lastDamager, 10000, true);
+        e.setDamage(Math.max(0, e.getDamage() *
+                ResistanceCalculator.damageMultiplier(typeResistance, generalResistance, shred, pierce)));
 
         double resistedDamage = e.getDamage();
         YamlConfiguration c = ValhallaMMO.getPluginConfig();
