@@ -411,15 +411,24 @@ damage_formula_mode: SET # Custom expressions only: SET or MULTIPLY
 damage_reduction_cap: 0.1 # Armor/toughness cannot reduce damage below 10% of post-resistance damage
 # Damage mitigation applies before the armor check, so it can still reduce damage taken
 
-# The types of damage armor is effective against. Formatted like TYPE:ARMOREFFECTIVENESS, where ARMOREFFECTIVENESS represents how effective the armor
-# is against this damage type. 1 being 100% effective, no debuff. 0.5 being half as effective. Can be considered armor penetration native to damage types
+# Damage-type effectiveness of the defender's ARMOR AND TOUGHNESS.
+# 1 = full armor and toughness; 0.25 = only 25% of each stat applies.
+# This is NOT a fixed percent of incoming damage blocked. Each type also
+# retains its own elemental resistance and general damage resistance.
 armor_effective_types:
-  - PROJECTILE:1
-  - FALLING:1
-  - BLUDGEONING:0.7 # Custom damage type added by the plugin, is more effective against armor because it benefits from 30% reduced armor by default
   - MELEE:1
-  - EXPLOSION:0.7
-  - FIRE:0.5 # Fire is still reduced as physical damage, but only as if the player was wearing half as much armor
+  - BLUDGEONING:0.8
+  - LIGHTNING:0.25
+  - FREEZING:0.25
+  - FIRE:0.25
+  - BLEED:0.25
+  - POISON:0.1
+  - NECROTIC:0.1
+  - EXPLOSION:0.1
+  - RADIANT:0.1
+  - MAGIC:0.05
+  - PROJECTILE:0.05
+  - FALLING:1 # unchanged; falling damage was not included in this rebalance
 negative_armor_damage_buff: 0.025 # If armor penetration (or negative armor) results in a negative armor value on the damaged target,
 # their damage taken increases by this value for each point of armor they are in the negative. (-10 armor would result in a 25% damage taken increase)
 
