@@ -1,4 +1,4 @@
-enabled: true # If false, mobs will not level or get stats according to the surrounding player power levels
+enabled: false # Default off for new installs; existing server mob_stats.yml is never overwritten
 monsters_only: true # If true, only monsters can receive levels and stats. If false, animals can get them also (kinda weird though, not recommended)
 
 # Calculates how much the player difficulty level of the area is. By default, a singular player will have a regional difficult the same as

@@ -380,7 +380,6 @@
     "format_signature": "&8- %player%",
     "translation_durability": "&7Durability:",
     "damage_indicator_crit": "&4CRIT!",
-
     "modifier_warning_insufficient_funds": "&cCrafting this item costs %quantity%x%cost%$",
     "modifier_warning_insufficient_exp": "&cCrafting this item costs %quantity%x%cost% EXP",
     "modifier_warning_counter_exceeded": "&cNot enough remaining upgrade slots",
@@ -394,7 +393,6 @@
     "modifier_warning_required_smithing_tag": "&cPreconditions failed!",
     "modifier_warning_no_invertible_effects": "&cNo invertible effects!",
     "modifier_warning_salvage_insufficient_skill": "&cYou do not have the skill to salvage this item!",
-
     "validation_warning_not_above_hot_block": "&cWater isn't boiling",
     "validation_warning_not_waterlogged": "&cNeeds to be waterlogged",
     "validation_warning_waterlogged": "&cCan't be waterlogged",
@@ -436,7 +434,6 @@
     "validation_warning_candle_nearby_required": "&cRequires candle nearby",
     "validation_warning_water_nearby_required": "&cRequires water nearby",
     "validation_warning_lava_nearby_required": "&cRequires lava nearby",
-
     "attribute_bow_strength": "%icon%%value% Shot Speed",
     "attribute_arrow_damage": "%icon%%value% Arrow Damage",
     "attribute_ammo_consumption": "%icon%%value% Ammo Consumption",
@@ -450,6 +447,8 @@
     "attribute_bleed_duration": "%icon%%value% Bleed Duration",
     "attribute_crit_chance": "%icon%%value% Crit Chance",
     "attribute_crit_damage": "%icon%%value% Crit Damage",
+    "attribute_resistance_pierce": "%icon%%value% Resistance Pierce",
+    "attribute_resistance_shred": "%icon%%value% Resistance Shred",
     "attribute_armor_penetration_flat": "%icon%%value% Armor Piercing",
     "attribute_light_armor_penetration_flat": "%icon%%value% Light Armor Piercing",
     "attribute_heavy_armor_penetration_flat": "%icon%%value% Heavy Armor Piercing",
@@ -493,6 +492,9 @@
     "attribute_crafting_speed": "%icon%%value% Crafting Speed",
     "attribute_alchemy_quality": "%icon%%value% Alchemy Skill",
     "attribute_alchemy_quality_fraction": "%icon%%value% Alchemy Skill",
+    "attribute_enchanting_eterna": "%icon%%value% Eterna (Enchanting Power)",
+    "attribute_enchanting_quanta": "%icon%%value% Quanta (Enchanting Variance)",
+    "attribute_enchanting_arcana": "%icon%%value% Arcana (Enchanting Rarity)",
     "attribute_enchanting_quality": "%icon%%value% Enchanting Skill",
     "attribute_enchanting_quality_fraction": "%icon%%value% Enchanting Skill",
     "attribute_anvil_quality_flat": "%icon%%value% Anvil Skill",
@@ -567,6 +569,8 @@
     "attribute_generic_block_interaction_range": "%icon%%value% Block Reach",
     "attribute_generic_step_height": "%icon%%value% Step Height",
     "attribute_shield_disarming": "%icon%%value% Shield Disarming",
+    "attribute_overheal": "%icon%%value% Overheal",
+    "attribute_ghost_health": "%icon%%value% Ghost Health",
     "attribute_life_steal": "%icon%%value% Life Steal",
     "attribute_generic_gravity": "%icon%%value% Gravity",
     "attribute_generic_safe_fall_distance": "%icon%%value% Fall Capacity",
@@ -597,11 +601,9 @@
     "attribute_butchery_drops": "%icon%%value% Animal Drops",
     "stat_attribute_negative_prefix": "&c",
     "stat_attribute_positive_prefix": "&7",
-
     "potion_effect_charges_format": "&7(%prefix%%charges_numeric%x&7)",
     "potion_effect_display": "&7&lActive Effects",
     "combined_potion_name": "&d",
-
     "potion_name_heal": "Healing",
     "potion_name_bad_omen": "War",
     "potion_name_harm": "Harming",
@@ -653,6 +655,8 @@
     "potion_name_bleed_duration": "Bleeding",
     "potion_name_crit_chance": "Focus",
     "potion_name_crit_damage": "Focus",
+    "potion_name_resistance_pierce": "Exposure",
+    "potion_name_resistance_shred": "Rending",
     "potion_name_armor_penetration_flat": "Crushing",
     "potion_name_light_armor_penetration_flat": "Crushing",
     "potion_name_heavy_armor_penetration_flat": "Crushing",
@@ -766,7 +770,7 @@
     "potion_name_light_armor": "Leatherskin",
     "potion_name_heavy_armor": "Ironskin",
     "potion_name_entity_drops": "Looting",
-    "potion_name_instant_explosion_damage":"Combustion",
+    "potion_name_instant_explosion_damage": "Combustion",
     "potion_name_instant_fire_damage": "Napalm",
     "potion_name_instant_poison_damage": "Virtulence",
     "potion_name_instant_magic_damage": "Sorcery",
@@ -795,6 +799,8 @@
     "potion_name_generic_block_interaction_range": "Reach",
     "potion_name_generic_step_height": "Stepping",
     "potion_name_shield_disarming": "Shattering",
+    "potion_name_overheal": "Bloodshield",
+    "potion_name_ghost_health": "Spectral Ward",
     "potion_name_life_steal": "Vampirism",
     "potion_name_generic_gravity": "Mass",
     "potion_name_generic_safe_fall_distance": " Capacity",
@@ -825,7 +831,6 @@
     "potion_name_damage_boss": "Slaying",
     "potion_name_damage_illager": "Justice",
     "potion_name_butchery_drops": "Butchering",
-
     "effect_name_heal": "%icon% Instant Health %value%",
     "effect_name_bad_omen": "%icon% Bad Omen %value% %duration%",
     "effect_name_harm": "%icon% Instant Damage %value%",
@@ -991,7 +996,7 @@
     "effect_name_light_armor": "%icon% Light Armor %value% %duration%",
     "effect_name_heavy_armor": "%icon% Heavy Armor %value% %duration%",
     "effect_name_fire": "%icon% Fire %duration%",
-    "effect_name_instant_explosion_damage":"%icon% Instant Explosion Damage %value%",
+    "effect_name_instant_explosion_damage": "%icon% Instant Explosion Damage %value%",
     "effect_name_instant_fire_damage": "%icon% Instant Fire Damage %value%",
     "effect_name_instant_poison_damage": "%icon% Instant Poison Damage %value%",
     "effect_name_instant_magic_damage": "%icon% Instant Magic Damage %value%",
@@ -1050,7 +1055,6 @@
     "effect_name_butchery_drops": "%icon% Animal Drops %value% %duration%",
     "stat_potion_positive_prefix": "&a",
     "stat_potion_negative_prefix": "&c",
-
     "stat_icon_bow_strength": "",
     "stat_icon_heal": "",
     "stat_icon_bad_omen": "",
@@ -1218,7 +1222,7 @@
     "stat_icon_fire": "",
     "stat_icon_bleed": "",
     "stat_icon_antibleed": "",
-    "stat_icon_instant_explosion_damage":"",
+    "stat_icon_instant_explosion_damage": "",
     "stat_icon_instant_fire_damage": "",
     "stat_icon_instant_poison_damage": "",
     "stat_icon_instant_magic_damage": "",
@@ -1278,7 +1282,6 @@
     "stat_icon_damage_boss": "",
     "stat_icon_damage_illager": "",
     "stat_icon_butchery_drops": "",
-
     "translation_next_page": "&7&lNext Page",
     "translation_previous_page": "&7&lPrevious Page",
     "translation_page_up": "&7&lPage Up",
@@ -1884,8 +1887,8 @@
     "smithing_perk_4_description": "&7Greatly buffs the quality of your &eDiamond&7 items. &eYou are now able to repair items in your crafting grid without destroying enchantments",
     "smithing_perk_5_name": "&eHellforge",
     "smithing_perk_5_description": "&7Greatly buffs the quality of your &eNetherite&7 items.",
-    "smithing_perk_6_name": "&eDurin's Blessing",
-    "smithing_perk_6_description": "&7Having truly mastered your craft, all your creations benefit from a &e{smithing_genericcraftingskill_add} &7bonus in quality",
+    "smithing_perk_6_name": "&eMaster of All Metals",
+    "smithing_perk_6_description": "&7Master smithing: grants &e{smithing_genericcraftingskill_add} &7universal crafting quality and unlocks &eValhallaEquipment random attributes &7when crafting eligible weapons, armor, shields and tools.",
     "smithing_perk_prismarine_name": "&9Marine Smithing",
     "smithing_perk_prismarine_description": "&7Grants you the ability to craft tridents",
     "smithing_perk_enderic_name": "&dExotic Smithing",
@@ -1900,14 +1903,14 @@
     "alchemy_perk_a1_description": "&7Enhances the quality of your poisons. Your indirect hits with splash potions become stronger",
     "alchemy_perk_a2_name": "&dChemical Artillery",
     "alchemy_perk_a2_description": "&7Enhances the quality of your poisons further. Enhances your splash potion intensity, lingering potion duration and radius, and throwing force. ",
-    "alchemy_perk_b1_name": "&dEffective Catalysts",
-    "alchemy_perk_b1_description": "&7Enhances the quality of your beneficial potions. Speeds up potion brewing by &d{alchemy_brewingtimereduction_add}",
+    "alchemy_perk_b1_name": "&dArcane Infusions",
+    "alchemy_perk_b1_description": "&7Improves beneficial potion quality by &d{alchemy_buffbrewingskill_add}&7 and brewing speed by &d{alchemy_brewingtimereduction_add}&7. Unlocks &d1-5 random trinket-inspired attributes &7on successfully brewed potions, without a quality requirement. Attribute rolls are &d50% stronger &7than comparable armor properties.",
     "alchemy_perk_b2_name": "&dExotic Ingredients",
-    "alchemy_perk_b2_description": "&7Increases beneficial potion quality and the chance to not spend ingredients by &d{alchemy_brewingingredientsavechance_add}&7 and unlocks &dHaste&7 and &dHealth Boost&7 potion recipes",
+    "alchemy_perk_b2_description": "&7Increases beneficial potion quality and ingredient-saving chance by &d{alchemy_brewingingredientsavechance_add}&7, and unlocks Haste and Health Boost recipes. &dArcane Infusions: +1 additional random potion attribute.",
     "alchemy_perk_3_name": "&dMighty Mixtures",
-    "alchemy_perk_3_description": "&7Allows you to merge the effects of multiple potions into one, up to &d{alchemy_potioncombiningmaxcombinations_add}&7 times, at some loss of duration",
+    "alchemy_perk_3_description": "&7Allows combining up to &d{alchemy_potioncombiningmaxcombinations_add} &7potions with a duration penalty. &dArcane Infusions: +2 additional random potion attributes &7per brew, stacking with Exotic Ingredients.",
     "alchemy_perk_4_name": "&dPrima Materia",
-    "alchemy_perk_4_description": "&7Greatly buffs the quality of all your potions. Unlocks &dTransmutation",
+    "alchemy_perk_4_description": "&7Greatly improves potion quality and unlocks &dTransmutation&7. &dArcane Infusions mastery: sets the minimum random-attribute count to 20 per brew. &7Additive perks still apply (up to 23 with the existing +1 and +2 perks).",
     "alchemy_perk_combo_name": "&dEtching Venom",
     "alchemy_perk_combo_description": "&7Adds &d{lightweapons_coatingcharges_add} &7charges to your Weapon Coating ability. You unlock recipes for a couple simple poisons that can be crafted without a brewing stand",
     "mining_perk_1_name": "&eBrittle Rock",
@@ -1974,6 +1977,12 @@
     "enchanting_perk_a1_description": "&7Decreases experience orb consumption by &b{enchanting_essencerefundfraction_add}&7, and lapis consumption by &b{enchanting_lapissavechance_add}",
     "enchanting_perk_a2_name": "&bPure Conduit",
     "enchanting_perk_a2_description": "&7Increases enchanting skill by &b{enchanting_enchantingskill_add}&7, decreases experience orb consumption by &b{enchanting_essencerefundfraction_add}&7, and lapis consumption by &b{enchanting_lapissavechance_add}",
+    "enchanting_perk_apothic_eterna_name": "&dEterna Attunement",
+    "enchanting_perk_apothic_eterna_description": "&7Gain &d{enchanting_apothiceterna_add} Eterna&7. Eterna contributes to Apotheosis-style enchanting table power (when integration is enabled). It does not change NG unlocks or Enchanting Quality.",
+    "enchanting_perk_apothic_quanta_name": "&5Quanta Attunement",
+    "enchanting_perk_apothic_quanta_description": "&7Gain &5{enchanting_apothicquanta_add} Quanta&7. Quanta contributes to enchanting table randomness when the optional integration is enabled.",
+    "enchanting_perk_apothic_arcana_name": "&6Arcana Attunement",
+    "enchanting_perk_apothic_arcana_description": "&7Gain &6{enchanting_apothicarcana_add} Arcana&7. Arcana contributes to rare enchantment selection when the optional integration is enabled.",
     "enchanting_perk_b1_name": "&bMental Focus",
     "enchanting_perk_b1_description": "&7You gain &b{enchanting_essencemultiplier_add} &7more experience orbs from everything, and level all skills &b{power_allskillexpmultiplier_add} &7faster",
     "enchanting_perk_b2_name": "&bHexblade",
@@ -2858,6 +2867,18 @@
       "&b{enchanting_essencerefundfraction_add} &7Experience Orbs Refunded",
       "&b{enchanting_lapissavechance_add} &7Reduced Lapis Consumption"
     ],
+    "enchanting_perk_apothic_eterna_messages": [
+      "&d✦ Eterna Attunement",
+      "&d+{enchanting_apothiceterna_add} &7Eterna"
+    ],
+    "enchanting_perk_apothic_quanta_messages": [
+      "&5✦ Quanta Attunement",
+      "&5+{enchanting_apothicquanta_add} &7Quanta"
+    ],
+    "enchanting_perk_apothic_arcana_messages": [
+      "&6✦ Arcana Attunement",
+      "&6+{enchanting_apothicarcana_add} &7Arcana"
+    ],
     "enchanting_perk_b1_messages": [
       "&b✰ &9Mental Focus &b✰",
       "&b{enchanting_essencemultiplier_add} &7Experience Orbs",
@@ -3193,9 +3214,11 @@
       "&d{alchemy_throwvelocity_add} &7Throwing Force"
     ],
     "alchemy_perk_b1_messages": [
-      "&d✰ &5Effective Catalysts &d✰",
+      "&d✰ &5Arcane Infusions &d✰",
       "&d{alchemy_buffbrewingskill_add} &7Beneficial Potion Quality",
-      "&d{alchemy_brewingtimereduction_add} &7Brewing Speed"
+      "&d{alchemy_brewingtimereduction_add} &7Brewing Speed",
+      "&dUnlocked: &7+1-5 random potion attributes",
+      "&7No quality required; &d150% &7of comparable armor strength"
     ],
     "alchemy_perk_b2_messages": [
       "&d✰ &5Exotic Ingredients &d✰",
@@ -3203,7 +3226,8 @@
       "&d{alchemy_brewingingredientsavechance_add} &7Ingredient Save Chance",
       "&dPotion Recipes Unlocked:",
       "&7- Haste (Awkward Potion + Nether Quartz)",
-      "&7- Health Boost (Awkward Potion + Sweet Berries)"
+      "&7- Health Boost (Awkward Potion + Sweet Berries)",
+      "&dArcane Infusions: &7+1 extra potion attribute"
     ],
     "alchemy_perk_3_messages": [
       "&d✰ &5Mighty Mixtures &d✰",
@@ -3213,13 +3237,16 @@
       "&7- 20% duration loss",
       "&8Take a potion and right-click it",
       "&8on top of another potion in your",
-      "&8inventory to merge them."
+      "&8inventory to merge them.",
+      "&dArcane Infusions: &7+2 extra potion attributes"
     ],
     "alchemy_perk_4_messages": [
       "&d✰ &5Prima Materia &d✰",
       "&d{alchemy_genericbrewingskill_add} &7Potion Quality",
       "&dPotion Recipes Unlocked:",
-      "&7- &#0077ffDraught of Midas &7(Nether Star)"
+      "&7- &#0077ffDraught of Midas &7(Nether Star)",
+      "&dArcane Mastery: &7minimum 20 random potion attributes",
+      "&7Additive perks stack; with +1 and +2, &d23 effects"
     ],
     "alchemy_perk_combo_messages": [
       "&d✰ &5Etching Venom &d✰",
@@ -3319,8 +3346,9 @@
       "&e{smithing_netheritecraftingskill_add} &7Netherite Quality"
     ],
     "smithing_perk_6_messages": [
-      "&e✰ &6Durin's Blessing &e✰",
-      "&e{smithing_genericcraftingskill_add} &7Universal Quality"
+      "&e✰ &6Master of All Metals &e✰",
+      "&e{smithing_genericcraftingskill_add} &7Universal Quality",
+      "&eUnlocked: &7ValhallaEquipment crafting attributes"
     ],
     "smithing_perk_prismarine_messages": [
       "&e✰ &6Marine Smithing &e✰",
@@ -3781,89 +3809,89 @@
       "&cI have nothing more to teach you"
     ],
     "lore_assassin_equipment": [
-      "&aPerfect stealth armor. Grants &f\uED0D&eTrue Invisibility"
+      "&aPerfect stealth armor. Grants &f&eTrue Invisibility"
     ],
     "lore_assassin_helmet": [
-      "&aGrants &f\uED10&aNight Vision in darkness"
+      "&aGrants &f&aNight Vision in darkness"
     ],
     "lore_assassin_chestplate": [
-      "&aGrants &f\uEE0C&aCrit Damage out of combat"
+      "&aGrants &f&aCrit Damage out of combat"
     ],
     "lore_assassin_leggings": [
-      "&aGrants &f\uED00&aSpeed Boost in darkness"
+      "&aGrants &f&aSpeed Boost in darkness"
     ],
     "lore_assassin_boots": [
-      "&aGrants &f\uEE0D&aArmor Penetration out of combat"
+      "&aGrants &f&aArmor Penetration out of combat"
     ],
     "lore_royal_diamond_equipment": [
-      "&aConverts light into &f\uEE8E&aHealing."
+      "&aConverts light into &f&aHealing."
     ],
     "lore_royal_netherite_equipment": [
-      "&aGrants &f\uEE0B&aCrit Chance in darkness"
+      "&aGrants &f&aCrit Chance in darkness"
     ],
     "lore_royal_sword": [
-      "&aGrants &f\uEE1F&aDamage Resistance when attacked"
+      "&aGrants &f&aDamage Resistance when attacked"
     ],
     "lore_royal_dagger": [
-      "&aGrants &f\uEE0B&aCrit Chance and &f\uEE0C&aCrit Damage",
+      "&aGrants &f&aCrit Chance and &f&aCrit Damage",
       "&awhile out of combat"
     ],
     "lore_royal_spear": [
-      "&aGrants &f\uEE59&aMovement Speed while out of combat"
+      "&aGrants &f&aMovement Speed while out of combat"
     ],
     "lore_royal_greataxe": [
-      "&aGrants &f\uEE19&aMelee Damage when attacked"
+      "&aGrants &f&aMelee Damage when attacked"
     ],
     "lore_royal_mace": [
-      "&aGrants high &f\uEE1D&aVelocity Damage while out",
+      "&aGrants high &f&aVelocity Damage while out",
       "&aof combat"
     ],
     "lore_royal_warhammer": [
-      "&aInflicts vulnerability to &f\uEE06&aKnockback",
+      "&aInflicts vulnerability to &f&aKnockback",
       "&aon hit, as well as nausea"
     ],
     "lore_royal_rapier": [
-      "&aAttacking steals the enemy's &f\uEE59&aMovement",
+      "&aAttacking steals the enemy's &f&aMovement",
       "&aSpeed and grants it to you"
     ],
     "lore_royal_knuckles": [
-      "&aAttacking steals the enemy's &f\uEE54&aAttack",
+      "&aAttacking steals the enemy's &f&aAttack",
       "&aDamage and grants it to you"
     ],
     "lore_royal_axes": [
-      "&aIncreases &f\uEE3E&aWoodcutting Drops"
+      "&aIncreases &f&aWoodcutting Drops"
     ],
     "lore_royal_pickaxes": [
-      "&aIncreases &f\uEE3C&aMining Drops"
+      "&aIncreases &f&aMining Drops"
     ],
     "lore_royal_shovels": [
-      "&aIncreases &f\uEE40&aDigging Drops"
+      "&aIncreases &f&aDigging Drops"
     ],
     "lore_royal_hoes": [
-      "&aIncreases &f\uEE42&aFarming Drops"
+      "&aIncreases &f&aFarming Drops"
     ],
     "lore_royal_bows": [
-      "&aGrants &f\uEE10&aArmor Penetration while",
+      "&aGrants &f&aArmor Penetration while",
       "&aout of combat"
     ],
     "lore_royal_crossbows": [
-      "&aInflicts &f\uEE10&aArmor Break on enemies"
+      "&aInflicts &f&aArmor Break on enemies"
     ],
     "lore_fishing_bait": [
       "&8Improves fishing luck by &95 &8when used.",
       "&8Keep in hotbar while fishing to use."
     ],
     "lore_turtle_helmet": [
-      "&aGrants permanent &f\uED0C&aWater Breathing"
+      "&aGrants permanent &f&aWater Breathing"
     ],
     "lore_turtle_chestplate": [
       "&aGreatly reduces damage taken from your back"
     ],
     "lore_turtle_leggings": [
-      "&aGrants &f\uED09&aHealth regeneration while in water"
+      "&aGrants &f&aHealth regeneration while in water"
     ],
     "lore_turtle_boots": [
-      "&aGrants permanent &f\uED1E&aDolphin's Grace"
+      "&aGrants permanent &f&aDolphin's Grace"
     ],
     "service_upgrade_enchant_lv10_lore": [
       "&7Click to enchant the input item",

@@ -557,6 +557,72 @@ perks:
       - enchanting_perk_2
     other_levels_required:
       - FARMING:50
+  # Apotheosis enchanting path: separate table stats, not NG quality perks.
+  # Existing server progression files are preserved. The merged skill-tree planner
+  # and its exported layout are included as separate tooling for manual adoption.
+  enchanting_perk_apothic_eterna:
+    icon: BOOKSHELF
+    coords: "10,6"
+    name: "<lang.enchanting_perk_apothic_eterna_name>"
+    description: "<lang.enchanting_perk_apothic_eterna_description>"
+    cost: 1
+    hidden: false
+    required_lv: 35
+    perk_rewards:
+      enchanting_apothiceterna_add: 8
+    messages:
+      - "<lang.enchanting_perk_apothic_eterna_messages>"
+    requireperk_all:
+      - enchanting_perk_b1
+    connection_line:
+      '1':
+        position: '9,6'
+        locked: GRAY_DYE:1172708
+        unlockable: ORANGE_DYE:1172808
+        unlocked: LIME_DYE:1172908
+
+  enchanting_perk_apothic_quanta:
+    icon: AMETHYST_SHARD
+    coords: "10,4"
+    name: "<lang.enchanting_perk_apothic_quanta_name>"
+    description: "<lang.enchanting_perk_apothic_quanta_description>"
+    cost: 1
+    hidden: false
+    required_lv: 55
+    perk_rewards:
+      enchanting_apothicquanta_add: 12
+    messages:
+      - "<lang.enchanting_perk_apothic_quanta_messages>"
+    requireperk_all:
+      - enchanting_perk_apothic_eterna
+    connection_line:
+      '1':
+        position: '10,5'
+        locked: GRAY_DYE:1172710
+        unlockable: ORANGE_DYE:1172810
+        unlocked: LIME_DYE:1172910
+
+  enchanting_perk_apothic_arcana:
+    icon: ENCHANTED_BOOK
+    coords: "10,2"
+    name: "<lang.enchanting_perk_apothic_arcana_name>"
+    description: "<lang.enchanting_perk_apothic_arcana_description>"
+    cost: 1
+    hidden: false
+    required_lv: 75
+    perk_rewards:
+      enchanting_apothicarcana_add: 15
+    messages:
+      - "<lang.enchanting_perk_apothic_arcana_messages>"
+    requireperk_all:
+      - enchanting_perk_apothic_quanta
+    connection_line:
+      '1':
+        position: '10,3'
+        locked: GRAY_DYE:1172710
+        unlockable: ORANGE_DYE:1172810
+        unlocked: LIME_DYE:1172910
+
   enchanting_perk_ng1:
     icon: TOTEM_OF_UNDYING
     coords: "4,9"

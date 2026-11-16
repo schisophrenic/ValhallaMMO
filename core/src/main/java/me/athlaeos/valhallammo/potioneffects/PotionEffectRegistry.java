@@ -175,6 +175,8 @@ public class PotionEffectRegistry {
         registerNewEffect(new GenericWrapper("BLEED_DURATION", (i) -> i >= 0, "\uEE0A", StatFormat.DIFFERENCE_TIME_SECONDS_BASE_20_P1).addModifier(Material.IRON_AXE, 20, 100));
         registerNewEffect(new GenericWrapper("CRIT_CHANCE", (i) -> i >= 0, "\uEE0B", StatFormat.DIFFERENCE_PERCENTILE_BASE_1_P1).addModifier(Material.GOLDEN_SWORD));
         registerNewEffect(new GenericWrapper("CRIT_DAMAGE", (i) -> i >= 0, "\uEE0C", StatFormat.DIFFERENCE_PERCENTILE_BASE_1_P1).addModifier(Material.IRON_SWORD));
+        registerNewEffect(new GenericWrapper("RESISTANCE_PIERCE", (i) -> i >= 0, "⚔", StatFormat.DIFFERENCE_PERCENTILE_BASE_1_P1));
+        registerNewEffect(new GenericWrapper("RESISTANCE_SHRED", (i) -> i >= 0, "✦", StatFormat.DIFFERENCE_PERCENTILE_BASE_1_P1));
         registerNewEffect(new GenericWrapper("ARMOR_PENETRATION_FLAT", (i) -> i >= 0, "\uEE0D", StatFormat.DIFFERENCE_FLOAT_P2).addModifier(Material.LEATHER_CHESTPLATE, 0.1, 1));
         registerNewEffect(new GenericWrapper("LIGHT_ARMOR_PENETRATION_FLAT", (i) -> i >= 0, "\uEE0E", StatFormat.DIFFERENCE_FLOAT_P2).addModifier(Material.CHAINMAIL_CHESTPLATE, 0.1, 1));
         registerNewEffect(new GenericWrapper("HEAVY_ARMOR_PENETRATION_FLAT", (i) -> i >= 0, "\uEE0F", StatFormat.DIFFERENCE_FLOAT_P2).addModifier(Material.IRON_CHESTPLATE, 0.1, 1));
@@ -324,6 +326,8 @@ public class PotionEffectRegistry {
 
         registerNewEffect(new GenericWrapper("ATTACK_REACH_MULTIPLIER", (i) -> i >= 0, "\uEE9D", StatFormat.DIFFERENCE_PERCENTILE_BASE_1_P1).addModifier(Material.ENDER_PEARL));
         registerNewEffect(new GenericWrapper("SHIELD_DISARMING", (i) -> i >= 0, "\uEE9E", StatFormat.DIFFERENCE_TIME_SECONDS_BASE_20_P1).addModifier(Material.NETHERITE_AXE));
+        registerNewEffect(new GenericWrapper("OVERHEAL", (i) -> i >= 0, "✚", StatFormat.DIFFERENCE_PERCENTILE_BASE_1_P1));
+        registerNewEffect(new GenericWrapper("GHOST_HEALTH", (i) -> i >= 0, "✧", StatFormat.DIFFERENCE_FLOAT_P2));
         registerNewEffect(new GenericWrapper("LIFE_STEAL", (i) -> i >= 0, "\uEE9F", StatFormat.PERCENTILE_BASE_1_P2).addModifier(Material.GHAST_TEAR));
         registerNewEffect(new GenericWrapper("GENERIC_GRAVITY", (i) -> i <= 0, "\uEEA0",  StatFormat.DIFFERENCE_PERCENTILE_BASE_1_P1).addModifier(Material.BEDROCK, 0.01, 0.1));
         registerNewEffect(new GenericWrapper("GENERIC_SAFE_FALL_DISTANCE", (i) -> i >= 0, "\uEEA1",  StatFormat.DIFFERENCE_FLOAT_P2).addModifier(Material.LEATHER_BOOTS, 0.01, 0.1));

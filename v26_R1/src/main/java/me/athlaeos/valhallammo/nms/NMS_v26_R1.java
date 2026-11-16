@@ -32,6 +32,7 @@ import net.minecraft.world.level.levelgen.structure.StructureStart;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -47,6 +48,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemRarity;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -74,7 +76,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public void forceAttack(Player player, LivingEntity victim) {
-        if (ValhallaMMO.isUsingPaperMC()) {
+        if (ValhallaMMO.getPaper() != null) {
             ValhallaMMO.getPaper().forceAttack(player, victim);
             return;
         }
@@ -148,22 +150,60 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public void addUniqueAttribute(LivingEntity e, UUID uuid, String identifier, Attribute type, double amount, AttributeModifier.Operation operation) {
-        NMS_v1_21_R1.addAttribute(e, identifier, type, amount, operation);
+        addAttribute(e, identifier, type, amount, operation);
     }
 
     @Override
     public boolean hasUniqueAttribute(LivingEntity e, UUID uuid, String identifier, Attribute type) {
-        return NMS_v1_21_R1.hasAttribute(e, identifier, type);
+        return hasAttribute(e, identifier, type);
     }
 
     @Override
     public double getUniqueAttributeValue(LivingEntity e, UUID uuid, String identifier, Attribute type) {
-        return NMS_v1_21_R1.getAttributeValue(e, identifier, type);
+        return getAttributeValue(e, identifier, type);
     }
 
     @Override
     public void removeUniqueAttribute(LivingEntity e, String identifier, Attribute type) {
-        NMS_v1_21_R1.removeAttribute(e, identifier, type);
+        removeAttribute(e, identifier, type);
+    }
+
+    // 26.x uses NamespacedKey-based modifiers. Keep these methods local
+    // instead of linking historic NMS modules compiled against older servers.
+    private static void addAttribute(LivingEntity entity, String id, Attribute type,
+                                     double amount, AttributeModifier.Operation operation) {
+        AttributeInstance instance = entity.getAttribute(type);
+        if (instance == null) return;
+        removeAttribute(entity, id, type);
+        if (amount != 0) instance.addModifier(new AttributeModifier(
+                ValhallaMMO.key(id), amount, operation, EquipmentSlotGroup.ANY));
+    }
+
+    private static boolean hasAttribute(LivingEntity entity, String id, Attribute type) {
+        AttributeInstance instance = entity.getAttribute(type);
+        if (instance == null) return false;
+        NamespacedKey key = ValhallaMMO.key(id);
+        return instance.getModifiers().stream().anyMatch(m ->
+                m.getKey().equals(key) || m.getName().equals(id));
+    }
+
+    private static double getAttributeValue(LivingEntity entity, String id, Attribute type) {
+        AttributeInstance instance = entity.getAttribute(type);
+        if (instance == null) return 0;
+        NamespacedKey key = ValhallaMMO.key(id);
+        return instance.getModifiers().stream()
+                .filter(m -> m.getKey().equals(key) || m.getName().equals(id))
+                .mapToDouble(AttributeModifier::getAmount).findFirst().orElse(0);
+    }
+
+    private static void removeAttribute(LivingEntity entity, String id, Attribute type) {
+        AttributeInstance instance = entity.getAttribute(type);
+        if (instance == null) return;
+        NamespacedKey key = ValhallaMMO.key(id);
+        for (AttributeModifier modifier : new ArrayList<>(instance.getModifiers())) {
+            if (modifier.getKey().equals(key) || modifier.getName().equals(id))
+                instance.removeModifier(modifier);
+        }
     }
 
     @Override
@@ -197,7 +237,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public void blockBreakAnimation(Player p, org.bukkit.block.Block b, int id, int stage) {
-        if (ValhallaMMO.isUsingPaperMC()) {
+        if (ValhallaMMO.getPaper() != null) {
             ValhallaMMO.getPaper().blockBreakAnimation(p, b, id, stage);
             return;
         }
@@ -216,7 +256,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public float toolPower(org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block b) {
-        if (ValhallaMMO.isUsingPaperMC()) return ValhallaMMO.getPaper().toolPower(tool, b);
+        if (ValhallaMMO.getPaper() != null) return ValhallaMMO.getPaper().toolPower(tool, b);
         if (!ItemUtils.isEmpty(tool)) {
             ItemStack craftItemStack = CraftItemStack.asNMSCopy(tool);
             Block nmsBlock = ((CraftWorld) b.getWorld()).getHandle().getBlockState(new BlockPos(b.getX(), b.getY(), b.getZ())).getBlock();
@@ -228,7 +268,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public float toolPower(org.bukkit.inventory.ItemStack tool, Material b) {
-        if (ValhallaMMO.isUsingPaperMC()) return ValhallaMMO.getPaper().toolPower(tool, b);
+        if (ValhallaMMO.getPaper() != null) return ValhallaMMO.getPaper().toolPower(tool, b);
         if (!ItemUtils.isEmpty(tool)) {
             ItemStack craftItemStack = CraftItemStack.asNMSCopy(tool);
             CraftBlockData data = (CraftBlockData) b.createBlockData();
@@ -239,7 +279,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public void breakBlock(Player p, org.bukkit.block.Block b) {
-        if (ValhallaMMO.isUsingPaperMC()) {
+        if (ValhallaMMO.getPaper() != null) {
             ValhallaMMO.getPaper().breakBlock(p, b);
             return;
         }
@@ -251,7 +291,7 @@ public final class NMS_v26_R1 implements NMS {
     @SuppressWarnings("deprecation")
     @Override
     public Sound blockSound(org.bukkit.block.Block b) {
-        if (ValhallaMMO.isUsingPaperMC()) return ValhallaMMO.getPaper().blockSound(b);
+        if (ValhallaMMO.getPaper() != null) return ValhallaMMO.getPaper().blockSound(b);
         try {
             Block nmsBlock = ((CraftWorld) b.getWorld()).getHandle().getBlockState(new BlockPos(b.getX(), b.getY(), b.getZ())).getBlock();
             SoundType soundEffectType = nmsBlock.defaultBlockState().getSoundType();
@@ -278,7 +318,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public void resetAttackCooldown(Player p){
-        if (ValhallaMMO.isUsingPaperMC()) {
+        if (ValhallaMMO.getPaper() != null) {
             ValhallaMMO.getPaper().resetAttackCooldown(p);
             return;
         }
@@ -297,7 +337,7 @@ public final class NMS_v26_R1 implements NMS {
             FoodComponent food = meta.getMeta().getFood();
             food.setCanAlwaysEat(canAlwaysEat);
             meta.getMeta().setFood(food);
-            if (!ValhallaMMO.isUsingPaperMC()){
+            if (ValhallaMMO.getPaper() == null){
                 ConsumableComponent consumable = meta.getMeta().getConsumable();
                 consumable.setConsumeSeconds(eatTimeSeconds);
                 consumable.setAnimation(ConsumableComponent.Animation.EAT);
@@ -340,12 +380,18 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public Enchantment getEnchantment(EnchantmentMappings mappedTo) {
-        return NMS_v1_20_R4.newMappings(mappedTo);
+        String key = switch (mappedTo) {
+            case CURSE_OF_BINDING -> "binding_curse";
+            case CURSE_OF_VANISHING -> "vanishing_curse";
+            default -> mappedTo.name().toLowerCase(Locale.ROOT);
+        };
+        return Enchantment.getByKey(NamespacedKey.minecraft(key));
     }
 
     @Override
     public PotionEffectType getPotionEffectType(PotionEffectMappings mappedTo){
-        return NMS_v1_20_R4.newMappings(mappedTo);
+        return PotionEffectType.getByKey(NamespacedKey.minecraft(
+                mappedTo.getNewEffect().toLowerCase(Locale.ROOT)));
     }
 
     @Override
@@ -526,7 +572,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public ActivityMappings getActivity(LivingEntity entity) {
-        if (ValhallaMMO.isUsingPaperMC()) return ValhallaMMO.getPaper().getActivity(entity);
+        if (ValhallaMMO.getPaper() != null) return ValhallaMMO.getPaper().getActivity(entity);
         Activity activity = ((CraftLivingEntity) entity).getHandle().getBrain().getActiveNonCoreActivity().orElse(null);
         if (activity != null) return ActivityMappings.fromName(activity.getName());
         return null;
