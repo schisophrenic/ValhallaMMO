@@ -143,10 +143,16 @@ public final class CombatShields implements Listener {
                 iterator.remove();
                 continue;
             }
-            Ghost ghost = getGhost(target);
-            if (ghost == null) {
+            double cap = Math.max(0, AccumulativeStatManager.getCachedStats("GHOST_HEALTH", target, 10000, true));
+            if (cap <= 0) {
                 iterator.remove();
                 continue;
+            }
+            Ghost ghost = entry.getValue();
+            if (cap != ghost.cap) {
+                boolean full = ghost.current >= ghost.cap - 0.000001;
+                ghost.current = full ? cap : Math.min(ghost.current, cap);
+                ghost.cap = cap;
             }
             if (now - ghost.lastHitAt >= delay * 1000L) {
                 ghost.current = Math.min(ghost.cap, ghost.current + ghost.cap * fraction);
