@@ -493,6 +493,9 @@
     "attribute_crafting_speed": "%icon%%value% Crafting Speed",
     "attribute_alchemy_quality": "%icon%%value% Alchemy Skill",
     "attribute_alchemy_quality_fraction": "%icon%%value% Alchemy Skill",
+    "attribute_enchanting_eterna": "%icon%%value% Eterna (Enchanting Power)",
+    "attribute_enchanting_quanta": "%icon%%value% Quanta (Enchanting Variance)",
+    "attribute_enchanting_arcana": "%icon%%value% Arcana (Enchanting Rarity)",
     "attribute_enchanting_quality": "%icon%%value% Enchanting Skill",
     "attribute_enchanting_quality_fraction": "%icon%%value% Enchanting Skill",
     "attribute_anvil_quality_flat": "%icon%%value% Anvil Skill",
@@ -1974,6 +1977,12 @@
     "enchanting_perk_a1_description": "&7Decreases experience orb consumption by &b{enchanting_essencerefundfraction_add}&7, and lapis consumption by &b{enchanting_lapissavechance_add}",
     "enchanting_perk_a2_name": "&bPure Conduit",
     "enchanting_perk_a2_description": "&7Increases enchanting skill by &b{enchanting_enchantingskill_add}&7, decreases experience orb consumption by &b{enchanting_essencerefundfraction_add}&7, and lapis consumption by &b{enchanting_lapissavechance_add}",
+    "enchanting_perk_apothic_eterna_name": "&dEterna Attunement",
+    "enchanting_perk_apothic_eterna_description": "&7Gain &d{enchanting_apothiceterna_add} Eterna&7. Eterna contributes to Apotheosis-style enchanting table power (when integration is enabled). It does not change NG unlocks or Enchanting Quality.",
+    "enchanting_perk_apothic_quanta_name": "&5Quanta Attunement",
+    "enchanting_perk_apothic_quanta_description": "&7Gain &5{enchanting_apothicquanta_add} Quanta&7. Quanta contributes to enchanting table randomness when the optional integration is enabled.",
+    "enchanting_perk_apothic_arcana_name": "&6Arcana Attunement",
+    "enchanting_perk_apothic_arcana_description": "&7Gain &6{enchanting_apothicarcana_add} Arcana&7. Arcana contributes to rare enchantment selection when the optional integration is enabled.",
     "enchanting_perk_b1_name": "&bMental Focus",
     "enchanting_perk_b1_description": "&7You gain &b{enchanting_essencemultiplier_add} &7more experience orbs from everything, and level all skills &b{power_allskillexpmultiplier_add} &7faster",
     "enchanting_perk_b2_name": "&bHexblade",
@@ -2857,6 +2866,18 @@
       "&b{enchanting_enchantingskill_add} &7Enchanting Power",
       "&b{enchanting_essencerefundfraction_add} &7Experience Orbs Refunded",
       "&b{enchanting_lapissavechance_add} &7Reduced Lapis Consumption"
+    ],
+    "enchanting_perk_apothic_eterna_messages": [
+      "&d✦ Eterna Attunement",
+      "&d+{enchanting_apothiceterna_add} &7Eterna"
+    ],
+    "enchanting_perk_apothic_quanta_messages": [
+      "&5✦ Quanta Attunement",
+      "&5+{enchanting_apothicquanta_add} &7Quanta"
+    ],
+    "enchanting_perk_apothic_arcana_messages": [
+      "&6✦ Arcana Attunement",
+      "&6+{enchanting_apothicarcana_add} &7Arcana"
     ],
     "enchanting_perk_b1_messages": [
       "&b✰ &9Mental Focus &b✰",
