@@ -74,7 +74,11 @@ public final class CombatShields implements Listener {
 
     @EventHandler
     public void onDeath(EntityDeathEvent e) {
-        clear(e.getEntity().getUniqueId());
+        UUID uuid = e.getEntity().getUniqueId();
+        ghosts.remove(uuid);
+        // Pending HP-damage credit must survive death until Valhalla's queued
+        // damage commit runs; setHealth(0) can fire this event synchronously.
+        for (Map<UUID, Double> credits : pendingHealthDamage.values()) credits.remove(uuid);
     }
 
     private void clear(UUID uuid) {
