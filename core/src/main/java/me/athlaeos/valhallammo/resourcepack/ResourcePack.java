@@ -32,8 +32,13 @@ public class ResourcePack {
         // The enum is ordered newest to oldest. Keep only the versions that
         // already had explicit resource-pack mappings; newer unknown versions
         // must continue to use the existing warning and fallback.
-        for (MinecraftVersion version : EnumSet.range(
-                MinecraftVersion.MINECRAFT_26_6_5, MinecraftVersion.MINECRAFT_1_21_4)) {
+        EnumSet<MinecraftVersion> newerVersions = EnumSet.range(
+                MinecraftVersion.MINECRAFT_26_3, MinecraftVersion.MINECRAFT_1_21_4);
+        newerVersions.addAll(EnumSet.of(
+                MinecraftVersion.MINECRAFT_26_6,
+                MinecraftVersion.MINECRAFT_26_5,
+                MinecraftVersion.MINECRAFT_26_4));
+        for (MinecraftVersion version : newerVersions) {
             mapResourcePackDetails(version, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
         }
 
