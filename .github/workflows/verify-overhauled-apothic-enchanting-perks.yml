@@ -1,0 +1,39 @@
+name: Verify Overhauled Apotheosis Enchanting Perks
+
+on:
+  push:
+    branches:
+      - feature/skill-tree-config-overhaul
+    paths:
+      - 'tools/skill-tree/**'
+      - 'core/src/main/java/me/athlaeos/valhallammo/playerstats/AccumulativeStatManager.java'
+      - 'core/src/main/java/me/athlaeos/valhallammo/playerstats/profiles/implementations/EnchantingProfile.java'
+      - 'core/src/main/java/me/athlaeos/valhallammo/item/ItemAttributesRegistry.java'
+      - 'core/src/main/resources/skills/enchanting_progression.yml'
+      - 'core/src/main/resources/languages/en-us.json'
+      - '.github/workflows/verify-overhauled-apothic-enchanting-perks.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Check native stats + rebuilt perk layout
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install YAML parser
+        run: python -m pip install -q PyYAML
+      - name: Verify stat registration and both skill-tree representations
+        run: python tools/skill-tree/validate_apothic_tree.py
+
+# Maven assembly deliberately excluded here. This fork requires third-party
+# artifacts including api-itemsadder 4.0.10 that were unavailable in the prior
+# GitHub CI environment (see run 43805711858). A passing static check does
+# NOT certify binary compilation or server compatibility.
