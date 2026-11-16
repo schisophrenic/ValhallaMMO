@@ -1,0 +1,75 @@
+name: Verify Apothic Combat and Package Test JAR
+
+on:
+  push:
+    branches:
+      - feature/apotheosis-attributes-integration
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-combat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Run standalone combat calculation tests
+        run: |
+          mkdir -p /tmp/valhalla-combat-tests
+          javac -d /tmp/valhalla-combat-tests \
+            core/src/main/java/me/athlaeos/valhallammo/utility/ResistanceCalculator.java \
+            core/src/main/java/me/athlaeos/valhallammo/utility/MultiCritCalculator.java \
+            core/src/main/java/me/athlaeos/valhallammo/utility/HybridArmorFormula.java \
+            core/src/test/java/me/athlaeos/valhallammo/utility/ResistanceCalculatorTest.java \
+            core/src/test/java/me/athlaeos/valhallammo/utility/MultiCritCalculatorTest.java \
+            core/src/test/java/me/athlaeos/valhallammo/utility/HybridArmorFormulaTest.java
+          for test in ResistanceCalculatorTest MultiCritCalculatorTest HybridArmorFormulaTest; do
+            java -cp /tmp/valhalla-combat-tests me.athlaeos.valhallammo.utility."$test"
+          done
+      - name: Validate test configuration, translations, and armor effectiveness
+        run: |
+          python3 - <<'PY'
+          import json, re
+          from pathlib import Path
+          cfg = Path('core/src/main/resources/config.yml').read_text()
+          mapping = dict((key, float(value)) for key, value in re.findall(r'^\s+- ([A-Z_]+):([\d.]+)', cfg, re.M))
+          expected = {
+              'MELEE': 1.0, 'BLUDGEONING': .8,
+              'LIGHTNING': .25, 'FREEZING': .25, 'FIRE': .25, 'BLEED': .25,
+              'POISON': .1, 'NECROTIC': .1, 'EXPLOSION': .1, 'RADIANT': .1,
+              'MAGIC': .05, 'PROJECTILE': .05, 'FALLING': 1.0,
+          }
+          assert mapping == expected, (mapping, expected)
+          assert cfg.count('health_bar_scaling_enabled:') == 1
+          assert 'damage_formula_physical: HYBRID' in cfg
+          lang = json.loads(Path('core/src/main/resources/languages/en-us.json').read_text())
+          for name in ('ghost_health', 'overheal', 'resistance_shred', 'resistance_pierce'):
+              assert lang['stringTranslations']['attribute_' + name], name
+          print('PASS: armor type mapping, hybrid preset, unique HUD key, four new attributes')
+          PY
+
+  package-test-jar:
+    needs: verify-combat
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Build full multi-version shaded plugin
+        run: mvn -B -ntp -DskipTests package
+      - name: Publish test JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: valhallammo-apothic-test
+          path: target/ValhallaMMO*.jar
+          if-no-files-found: error
+          retention-days: 14
