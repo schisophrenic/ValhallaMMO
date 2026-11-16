@@ -87,23 +87,42 @@ Integration checks required before deployment:
 - Ghost health item switching, world blacklist, respawn, death, quit, partial depletion and timer reset.
 - Server/plugin restart, other damage listeners, and BetterDamage visual compatibility.
 
-## Armor model: review only; do not enable automatically
+## Approved hybrid physical armor formula (new default)
 
-Current default Valhalla expression (`damage_formula_physical`) stays unchanged, including its 10%-of-raw-damage minimum and separate toughness damage reduction.
+**Implemented in** `utility/HybridArmorFormula.java`, selected with `damage_formula_physical: HYBRID` in `config.yml`. This is a balanced middle ground for high-HP players and ValhallaEquipment. It does not replace Valhalla's resistance, penetration, damage-type armor effectiveness, or protection enchantment sources.
 
-If the default Apothic armor formula were selected instead, with no penetration, enchantments, or other mitigation:
+```text
+D = post-resistance incoming damage (after penetration / damage-type multipliers)
+A = 15 + hybrid_armor_growth * max(0, D - 20)
+damage_after_armor = D * A / (A + effectiveArmor)
+                     / (1 + effectiveToughness * hybrid_toughness_factor)
+```
 
-| Incoming | Armor | Toughness | Valhalla damage | Apothic damage |
-| ---: | ---: | ---: | ---: | ---: |
-| 30 | 20 | 10 | 9.89 | 12.86 |
-| 50 | 20 | 10 | 14.29 | 27.78 |
-| 50 | 50 | 10 | 7.69 | 16.67 |
-| 100 | 20 | 20 | 14.29 | 71.43 |
-| 100 | 50 | 20 | 10.00 | 50.00 |
+```yaml
+damage_formula_physical: HYBRID
+hybrid_armor_growth: 0.25
+hybrid_toughness_factor: 0.015
+damage_reduction_cap: 0.1
+```
 
-A 100-HP character wearing 50 armor and 20 toughness would take **10** damage from a 100-point raw hit under Valhalla's default formula, compared with **50** under Apothic's. That is a **5x damage difference**, not merely a cosmetic change, so any armor formula adoption requires balancing against custom ValhallaEquipment weapon damage and the new high HP pools.
+The attacker's existing armor penetration is resolved before this formula. The per-damage-type `armor_effective_types` scales effective armor and toughness as before. Higher damage gradually weakens the *relative effectiveness of armor*, but toughness has an independent, consistent mitigation factor rather than scaling its effect directly with each extra damage point. Its **absolute** damage prevented grows for larger hits. The 10% minimum damage floor remains in place, applied to post-resistance incoming damage. The existing `DAMAGE_ABSORPTION` stat is subtracted after formula evaluation; golden absorption and Ghost Health are handled afterwards by the damage listener.
 
-No armor profile selector or Apothic armor formula has been added in this change.
+When `damage_formula_physical` is a custom expression instead of `HYBRID`, existing `damage_formula_mode: SET|MULTIPLY` remains supported. The old default expression included `-%absorption%`, so the listener now avoids subtracting that stat twice when the custom expression explicitly includes `%absorption%`.
+
+| Incoming | Armor | Toughness | Valhalla classic | Apothic-style | New hybrid |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 10 | 10 | 0 | 6.00 | 5.00 | 6.00 |
+| 30 | 20 | 10 | 9.89 | 12.86 | 12.17 |
+| 50 | 20 | 10 | 14.29 | 27.78 | 23.02 |
+| 50 | 50 | 10 | 7.69 | 16.67 | 13.49 |
+| 100 | 20 | 20 | 14.29 | 71.43 | 48.95 |
+| 100 | 50 | 20 | 10.00 | 50.00 | 31.67 |
+
+The table is before resistance, `DAMAGE_ABSORPTION`, actual absorption hearts, Ghost Health, and other effects, with zero armor penetration.
+
+**Migration:** Existing servers that already have a `plugins/ValhallaMMO/config.yml` may retain the old `damage_formula_physical` line. Set it explicitly to `HYBRID` and add the two `hybrid_*` tuning keys (the built-in defaults also work without the keys) to enable the new behavior on an existing deployment. Do not assume changing a bundled resource overwrites a previously saved server configuration.
+
+**Validation:** `HybridArmorFormulaTest.java` contains 14 dependency-free checks. They passed with Java 21. The complete plugin still requires a Maven build and Paper/Purpur runtime testing. The same preset is shared by mobs and players using Valhalla's custom physical-damage system.
 
 **Upstream references**:
 - [Apothic critical strike and post-damage lifesteal](https://github.com/Shadows-of-Fire/Apothic-Attributes/blob/26.1/src/main/java/dev/shadowsoffire/apothic_attributes/impl/AttributeEvents.java)
