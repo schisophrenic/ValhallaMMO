@@ -301,10 +301,19 @@ public class EntityAttackListener implements Listener {
                 if (/*attackCooldown >= 0.9 && */(cause == null || !cause.equals("BLEED")) && (!(trueDamager instanceof Player p) || !WorldGuardHook.inDisabledRegion(v.getLocation(), p, WorldGuardHook.VMMO_COMBAT_CRIT))){
                     double critChanceResistance = AccumulativeStatManager.getCachedRelationalStats("CRIT_CHANCE_RESISTANCE", v, e.getDamager(), 10000, true);
                     double critChance = AccumulativeStatManager.getCachedRelationalStats("CRIT_CHANCE", v, e.getDamager(), 10000, true) * (1 - critChanceResistance);
-                    if (critNextAttack.contains(trueDamager.getUniqueId()) || Utils.proc(critChance, damagerLuck - victimLuck, false)) {
+                    boolean forcedCrit = critNextAttack.contains(trueDamager.getUniqueId());
+                    boolean multiCritEnabled = ValhallaMMO.getPluginConfig().getBoolean("apothic_multicrit_enabled", true);
+                    int critHits = multiCritEnabled
+                            ? MultiCritCalculator.rollCount(critChance, forcedCrit,
+                            ValhallaMMO.getPluginConfig().getInt("apothic_multicrit_max_hits", 5),
+                            chance -> Utils.proc(chance, damagerLuck - victimLuck, false))
+                            : (forcedCrit || Utils.proc(critChance, damagerLuck - victimLuck, false) ? 1 : 0);
+                    if (critHits > 0) {
                         critNextAttack.remove(trueDamager.getUniqueId());
                         double critDamageResistance = AccumulativeStatManager.getCachedRelationalStats("CRIT_DAMAGE_RESISTANCE", v, e.getDamager(), 10000, true);
                         double critDamage = 1 + (AccumulativeStatManager.getCachedRelationalStats("CRIT_DAMAGE", v, e.getDamager(), 10000, true) * (1 - critDamageResistance));
+                        if (multiCritEnabled) critDamage = MultiCritCalculator.multiplier(critDamage, critHits,
+                                ValhallaMMO.getPluginConfig().getDouble("apothic_multicrit_diminishing", 0.85));
                         EntityCriticallyHitEvent event = new EntityCriticallyHitEvent(v, e.getDamager(), combatType, e.getDamage(), critDamage);
                         ValhallaMMO.getInstance().getServer().getPluginManager().callEvent(event);
                         if (!event.isCancelled()){
