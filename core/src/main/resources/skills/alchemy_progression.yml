@@ -295,3 +295,94 @@ perks:
         - alchemy_perk_ng2
     messages:
       - "<lang.alchemy_perk_ng2_messages>"
+  alchemy_perk_arcane_infusions:
+    icon: AMETHYST_SHARD
+    coords: "6,2"
+    name: '&dArcane Infusions'
+    description: '&7Unlocks 1-5 random trinket-inspired potion attribute effects on every successful brew, no quality requirement'
+    cost: 1
+    hidden: false
+    required_lv: 30
+    perk_rewards: {}
+    messages:
+      - '&dArcane Infusions unlocked!'
+    requireperk_all:
+      - alchemy_perk_2
+    custom_model_data_unlockable: -1
+    custom_model_data_unlocked: -1
+    custom_model_data_visible: -1
+    connection_line:
+      '1':
+        position: '5,2'
+        locked: GRAY_DYE:1172700
+        unlockable: ORANGE_DYE:1172800
+        unlocked: LIME_DYE:1172900
+
+  alchemy_perk_arcane_plus1:
+    icon: GLOWSTONE_DUST
+    coords: "6,4"
+    name: '&dArcane Intensification I'
+    description: '&7Every brewed potion gains one additional random attribute effect'
+    cost: 1
+    hidden: false
+    required_lv: 50
+    perk_rewards: {}
+    messages:
+      - '&dArcane Intensification I unlocked!'
+    requireperk_all:
+      - alchemy_perk_arcane_infusions
+    custom_model_data_unlockable: -1
+    custom_model_data_unlocked: -1
+    custom_model_data_visible: -1
+    connection_line:
+      '1':
+        position: '6,3'
+        locked: GRAY_DYE:1172700
+        unlockable: ORANGE_DYE:1172800
+        unlocked: LIME_DYE:1172900
+
+  alchemy_perk_arcane_plus2:
+    icon: EXPERIENCE_BOTTLE
+    coords: "6,6"
+    name: '&dArcane Intensification II'
+    description: '&7Every brewed potion gains two more random attribute effects (stacks with I)'
+    cost: 1
+    hidden: false
+    required_lv: 70
+    perk_rewards: {}
+    messages:
+      - '&dArcane Intensification II unlocked!'
+    requireperk_all:
+      - alchemy_perk_arcane_plus1
+    custom_model_data_unlockable: -1
+    custom_model_data_unlocked: -1
+    custom_model_data_visible: -1
+    connection_line:
+      '1':
+        position: '6,5'
+        locked: GRAY_DYE:1172700
+        unlockable: ORANGE_DYE:1172800
+        unlocked: LIME_DYE:1172900
+
+  alchemy_perk_arcane_mastery:
+    icon: NETHER_STAR
+    coords: "6,8"
+    name: '&5Arcane Mastery'
+    description: '&7Sets the minimum random attribute count to 20 per brew; other additive perks still apply'
+    cost: 1
+    hidden: false
+    required_lv: 100
+    perk_rewards: {}
+    messages:
+      - '&dArcane Mastery unlocked!'
+    requireperk_all:
+      - alchemy_perk_arcane_plus2
+    custom_model_data_unlockable: -1
+    custom_model_data_unlocked: -1
+    custom_model_data_visible: -1
+    connection_line:
+      '1':
+        position: '6,7'
+        locked: GRAY_DYE:1172700
+        unlockable: ORANGE_DYE:1172800
+        unlocked: LIME_DYE:1172900
