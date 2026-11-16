@@ -24,14 +24,17 @@
     </properties>
 
     <modules>
+        <!-- Shared gameplay code and the single distributable plugin artifact. -->
         <module>core</module>
         <module>dist</module>
-        <module>v1_20_R3</module>
-        <module>v1_20_R2</module>
-        <module>v1_20_R1</module>
-        <module>v1_19_R3</module>
-        <module>v1_19_R2</module>
+
+        <!-- Minecraft/CraftBukkit compatibility implementations. -->
         <module>v1_19_R1</module>
+        <module>v1_19_R2</module>
+        <module>v1_19_R3</module>
+        <module>v1_20_R1</module>
+        <module>v1_20_R2</module>
+        <module>v1_20_R3</module>
         <module>v1_20_R4</module>
         <module>v1_21_R1</module>
         <module>v1_21_R2</module>
@@ -41,6 +44,8 @@
         <module>v1_21_R6</module>
         <module>v1_21_R7</module>
         <module>v26_R1</module>
+
+        <!-- Paper-specific compatibility implementations. -->
         <module>paper1_21_R3</module>
         <module>paper1_21_R4</module>
         <module>paper1_21_R5</module>
