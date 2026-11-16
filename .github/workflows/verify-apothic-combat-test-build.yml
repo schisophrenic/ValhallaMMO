@@ -64,12 +64,22 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
-      - name: Build full multi-version shaded plugin
-        run: mvn -B -ntp -DskipTests package
+      # Only package the NMS variants required by 26.x. Older Paper modules
+      # need unavailable ca.bkaw:paper-nms snapshots and are not used on 26.x.
+      - name: Build required Purpur 26 modules
+        run: mvn -B -ntp -DskipTests -pl v26_R1 -am install
+      - name: Shade Purpur 26 beta JAR
+        run: mvn -B -ntp -DskipTests -f dist-purpur26/pom.xml package
+      - name: Check assembled beta plugin classes
+        run: |
+          JAR=dist-purpur26/target/ValhallaMMO_Purpur26_Apothic_Beta.jar
+          jar tf "$JAR" | grep -q 'me/athlaeos/valhallammo/ValhallaMMO.class'
+          jar tf "$JAR" | grep -q 'me/athlaeos/valhallammo/nms/NMS_v26_R1.class'
+          jar tf "$JAR" | grep -q 'plugin.yml'
       - name: Publish test JAR
         uses: actions/upload-artifact@v4
         with:
-          name: valhallammo-apothic-test
-          path: target/ValhallaMMO*.jar
+          name: valhallammo-purpur26-apothic-test
+          path: dist-purpur26/target/ValhallaMMO_Purpur26_Apothic_Beta.jar
           if-no-files-found: error
           retention-days: 14
