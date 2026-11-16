@@ -76,7 +76,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public void forceAttack(Player player, LivingEntity victim) {
-        if (ValhallaMMO.isUsingPaperMC()) {
+        if (ValhallaMMO.getPaper() != null) {
             ValhallaMMO.getPaper().forceAttack(player, victim);
             return;
         }
@@ -237,7 +237,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public void blockBreakAnimation(Player p, org.bukkit.block.Block b, int id, int stage) {
-        if (ValhallaMMO.isUsingPaperMC()) {
+        if (ValhallaMMO.getPaper() != null) {
             ValhallaMMO.getPaper().blockBreakAnimation(p, b, id, stage);
             return;
         }
@@ -256,7 +256,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public float toolPower(org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block b) {
-        if (ValhallaMMO.isUsingPaperMC()) return ValhallaMMO.getPaper().toolPower(tool, b);
+        if (ValhallaMMO.getPaper() != null) return ValhallaMMO.getPaper().toolPower(tool, b);
         if (!ItemUtils.isEmpty(tool)) {
             ItemStack craftItemStack = CraftItemStack.asNMSCopy(tool);
             Block nmsBlock = ((CraftWorld) b.getWorld()).getHandle().getBlockState(new BlockPos(b.getX(), b.getY(), b.getZ())).getBlock();
@@ -268,7 +268,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public float toolPower(org.bukkit.inventory.ItemStack tool, Material b) {
-        if (ValhallaMMO.isUsingPaperMC()) return ValhallaMMO.getPaper().toolPower(tool, b);
+        if (ValhallaMMO.getPaper() != null) return ValhallaMMO.getPaper().toolPower(tool, b);
         if (!ItemUtils.isEmpty(tool)) {
             ItemStack craftItemStack = CraftItemStack.asNMSCopy(tool);
             CraftBlockData data = (CraftBlockData) b.createBlockData();
@@ -279,7 +279,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public void breakBlock(Player p, org.bukkit.block.Block b) {
-        if (ValhallaMMO.isUsingPaperMC()) {
+        if (ValhallaMMO.getPaper() != null) {
             ValhallaMMO.getPaper().breakBlock(p, b);
             return;
         }
@@ -291,7 +291,7 @@ public final class NMS_v26_R1 implements NMS {
     @SuppressWarnings("deprecation")
     @Override
     public Sound blockSound(org.bukkit.block.Block b) {
-        if (ValhallaMMO.isUsingPaperMC()) return ValhallaMMO.getPaper().blockSound(b);
+        if (ValhallaMMO.getPaper() != null) return ValhallaMMO.getPaper().blockSound(b);
         try {
             Block nmsBlock = ((CraftWorld) b.getWorld()).getHandle().getBlockState(new BlockPos(b.getX(), b.getY(), b.getZ())).getBlock();
             SoundType soundEffectType = nmsBlock.defaultBlockState().getSoundType();
@@ -318,7 +318,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public void resetAttackCooldown(Player p){
-        if (ValhallaMMO.isUsingPaperMC()) {
+        if (ValhallaMMO.getPaper() != null) {
             ValhallaMMO.getPaper().resetAttackCooldown(p);
             return;
         }
@@ -337,7 +337,7 @@ public final class NMS_v26_R1 implements NMS {
             FoodComponent food = meta.getMeta().getFood();
             food.setCanAlwaysEat(canAlwaysEat);
             meta.getMeta().setFood(food);
-            if (!ValhallaMMO.isUsingPaperMC()){
+            if (!ValhallaMMO.getPaper() != null){
                 ConsumableComponent consumable = meta.getMeta().getConsumable();
                 consumable.setConsumeSeconds(eatTimeSeconds);
                 consumable.setAnimation(ConsumableComponent.Animation.EAT);
@@ -572,7 +572,7 @@ public final class NMS_v26_R1 implements NMS {
 
     @Override
     public ActivityMappings getActivity(LivingEntity entity) {
-        if (ValhallaMMO.isUsingPaperMC()) return ValhallaMMO.getPaper().getActivity(entity);
+        if (ValhallaMMO.getPaper() != null) return ValhallaMMO.getPaper().getActivity(entity);
         Activity activity = ((CraftLivingEntity) entity).getHandle().getBrain().getActiveNonCoreActivity().orElse(null);
         if (activity != null) return ActivityMappings.fromName(activity.getName());
         return null;
