@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,43 +29,20 @@ public class ResourcePack {
     private static File pack;
     private static final Map<MinecraftVersion, ResourcePackDetails> resourcePacks = new HashMap<>();
     static {
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_6, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_5, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_4, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_3, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_2_5, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_2_4, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_2_3, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_2_2, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_2_1, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_2, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_1_2, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_1_1, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_26_1, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21_11, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21_10, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21_9, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21_8, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21_7, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21_6, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21_5, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21_4, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
+        // The enum is ordered newest to oldest. Keep only the versions that
+        // already had explicit resource-pack mappings; newer unknown versions
+        // must continue to use the existing warning and fallback.
+        for (MinecraftVersion version : EnumSet.range(
+                MinecraftVersion.MINECRAFT_26_6_5, MinecraftVersion.MINECRAFT_1_21_4)) {
+            mapResourcePackDetails(version, PACK_1_21_4_NEWER_URL, PACK_1_21_4_NEWER_SHA);
+        }
+
         mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21_3, PACK_1_21_3_URL, PACK_1_21_3_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21_2, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21_1, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_21, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_20_6, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_20_5, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_20_4, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_20_3, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_20_2, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_20_1, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_20, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_19_4, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_19_3, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_19_2, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_19_1, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
-        mapResourcePackDetails(MinecraftVersion.MINECRAFT_1_19, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
+
+        for (MinecraftVersion version : EnumSet.range(
+                MinecraftVersion.MINECRAFT_1_21_2, MinecraftVersion.MINECRAFT_1_19)) {
+            mapResourcePackDetails(version, PACK_1_21_2_OLDER_URL, PACK_1_21_2_OLDER_SHA);
+        }
     }
 
     private static void mapResourcePackDetails(MinecraftVersion version, String packLink, String packSha1){
