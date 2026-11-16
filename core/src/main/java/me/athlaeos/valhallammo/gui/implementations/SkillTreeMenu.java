@@ -113,7 +113,14 @@ public class SkillTreeMenu extends Menu {
 
     @Override
     public String getMenuName() {
-        return Utils.chat(ValhallaMMO.isResourcePackConfigForced() ? "&f\uF808\uF001" : TranslationManager.getTranslation("skilltree"));
+        String customizedTitle = TranslationManager.getTranslation("skilltree");
+        String bundledTitle = TranslationManager.getDefaultTranslations().getStringTranslations().get("skilltree");
+
+        // Preserve custom en-us.json translations even when the resource pack
+        // override is enabled; use the textured title only for the stock text.
+        boolean useDefaultPackTitle = ValhallaMMO.isResourcePackConfigForced()
+                && java.util.Objects.equals(customizedTitle, bundledTitle);
+        return Utils.chat(useDefaultPackTitle ? "&f\uF808\uF001" : customizedTitle);
     }
 
     @Override
