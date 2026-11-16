@@ -14,6 +14,7 @@ import me.athlaeos.valhallammo.utility.StringUtils;
 import me.athlaeos.valhallammo.version.AttributeMappings;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.ConfigurationSection;
@@ -221,6 +222,8 @@ public class ItemAttributesRegistry {
         register(new AttributeDisplayWrapper("DAMAGE_ILLAGER", StatFormat.PERCENTILE_BASE_1_P1, "\uEEB8", (i) -> i >= 0).addModifier(Material.TOTEM_OF_UNDYING));
         register(new AttributeDisplayWrapper("BUTCHERY_DROPS", StatFormat.PERCENTILE_BASE_1_P1, "\uEEB9", (i) -> i >= 0).addModifier(Material.BEEF));
 
+        registerRuntimeVanillaAttributes();
+
         addVanillaStat(Material.WOODEN_SWORD, getCopy("GENERIC_ATTACK_DAMAGE").setValue(4), getCopy("GENERIC_ATTACK_SPEED").setValue(1.6));
         addVanillaStat(Material.WOODEN_PICKAXE, getCopy("GENERIC_ATTACK_DAMAGE").setValue(2), getCopy("GENERIC_ATTACK_SPEED").setValue(1.2), getCopy("MINING_SPEED").setValue(2).setHidden(true));
         addVanillaStat(Material.WOODEN_SHOVEL, getCopy("GENERIC_ATTACK_DAMAGE").setValue(2.5), getCopy("GENERIC_ATTACK_SPEED").setValue(1), getCopy("MINING_SPEED").setValue(2).setHidden(true));
@@ -316,6 +319,27 @@ public class ItemAttributesRegistry {
         addVanillaStat("MACE", getCopy("GENERIC_ATTACK_DAMAGE").setValue(6), getCopy("GENERIC_ATTACK_SPEED").setValue(0.6));
     }
 
+    /** Discover every Minecraft vanilla attribute at runtime, including newly added ones. */
+    private static void registerRuntimeVanillaAttributes(){
+        for (Attribute attribute : Registry.ATTRIBUTE){
+            NamespacedKey key = attribute.getKey();
+            if (key == null || !NamespacedKey.MINECRAFT.equals(key.getNamespace())) continue;
+            registerRuntimeAlias(key.getKey().toUpperCase(Locale.ROOT));
+            AttributeMappings mapping = AttributeMappings.getAttributeMapping(key.toString());
+            if (mapping == null) continue;
+            registerRuntimeAlias(mapping.getAttribute1_19());
+            registerRuntimeAlias(mapping.getAttribute1_20_5());
+            registerRuntimeAlias(mapping.getAttribute1_21());
+            registerRuntimeAlias(mapping.getAttributeNew());
+        }
+    }
+
+    private static void registerRuntimeAlias(String name){
+        if (name == null || registeredAttributes.containsKey(name)) return;
+        register(new AttributeDisplayWrapper(name, "✦", (i) -> i >= 0,
+                StatFormat.FLOAT_P2, StatFormat.PERCENTILE_BASE_1_P1, StatFormat.PERCENTILE_BASE_1_P1));
+    }
+
     public static void reload(){
         registeredAttributes.clear();
         registerAttributes();
@@ -394,11 +418,10 @@ public class ItemAttributesRegistry {
                 if (otherAttributes == null) attributes.putAll(getVanillaStats(type));
                 else {
                     for (Attribute attribute : otherAttributes.keys()){
-                        AttributeMappings mapping = AttributeMappings.getAttributeMapping(attribute.toString());
-                        if (mapping == null)
-                            mapping = AttributeMappings.getAttributeMapping(attribute.getKey().toString());
-                        if (mapping == null) continue;
-                        AttributeWrapper wrapper = registeredAttributes.get(mapping.getAttribute1_19());
+                        AttributeMappings mapping = AttributeMappings.getAttributeMapping(attribute.getKey().toString());
+                        String name = mapping != null && mapping.getAttribute1_19() != null
+                                ? mapping.getAttribute1_19() : attribute.getKey().getKey().toUpperCase(Locale.ROOT);
+                        AttributeWrapper wrapper = registeredAttributes.get(name);
                         if (wrapper == null) continue;
                         for (AttributeModifier modifier : otherAttributes.get(attribute)) {
                             wrapper = wrapper.copy();

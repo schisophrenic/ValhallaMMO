@@ -111,7 +111,7 @@ public class Perk {
                 profile.getPermanentlyLockedPerks().contains(this.name) ||
                 profile.getFakeUnlockedPerks().contains(this.name)) return false;
 
-        return metResourceRequirements(p) && metLevelRequirement(p) &&
+        return metPermissionRequirement(p) && metResourceRequirements(p) && metLevelRequirement(p) &&
                 metConditionRequirements(p, false);
     }
 
@@ -120,6 +120,11 @@ public class Perk {
         if (!profile.getUnlockedPerks().contains(this.name) &&
                 !profile.getPermanentlyUnlockedPerks().contains(this.name)) return false;
         return !metLevelRequirement(p) || !metConditionRequirements(p, false);
+    }
+
+    /** A missing or empty permission keeps existing perk configurations unrestricted. */
+    public boolean metPermissionRequirement(Player p){
+        return permissionRequirement == null || permissionRequirement.isBlank() || p.hasPermission(permissionRequirement);
     }
 
     public boolean metResourceRequirements(Player p){

@@ -2,6 +2,9 @@ package me.athlaeos.valhallammo.listeners;
 
 import me.athlaeos.valhallammo.ValhallaMMO;
 import org.bukkit.Tag;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.EntityType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
@@ -107,10 +110,8 @@ public final class EnchantmentPriorityListener implements Listener {
         if (!enabled || delegated() || !(event.getEntity() instanceof LivingEntity victim)
                 || victim.getEquipment() == null) return;
         var cause = event.getCause();
-        boolean fire = switch (cause) {
-            case FIRE, FIRE_TICK, LAVA, HOT_FLOOR, CAMPFIRE, MELTING -> true;
-            default -> false;
-        };
+        boolean fire = List.of("FIRE", "FIRE_TICK", "LAVA", "HOT_FLOOR", "CAMPFIRE", "MELTING")
+                .contains(cause.name());
         boolean blast = cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION
                 || cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION;
         boolean projectile = cause == EntityDamageEvent.DamageCause.PROJECTILE;
@@ -172,15 +173,21 @@ public final class EnchantmentPriorityListener implements Listener {
             if (level <= 0) continue;
             double bonus = switch (family) {
                 case "sharpness" -> 0.5 * level + 0.5;
-                case "smite" -> Tag.ENTITY_TYPES_SENSITIVE_TO_SMITE.isTagged(event.getEntityType())
+                case "smite" -> isTagged(event.getEntityType(), "sensitive_to_smite")
                         ? 2.5 * level : 0.0;
-                case "bane_of_arthropods" -> Tag.ENTITY_TYPES_SENSITIVE_TO_BANE_OF_ARTHROPODS.isTagged(event.getEntityType())
+                case "bane_of_arthropods" -> isTagged(event.getEntityType(), "sensitive_to_bane_of_arthropods")
                         ? 2.5 * level : 0.0;
                 default -> 0.0;
             };
             correction += bonus * (1.0 - w.getOrDefault(family, 0.0));
         }
         if (correction > 0) event.setDamage(Math.max(0, event.getDamage() - correction));
+    }
+
+    private static boolean isTagged(EntityType type, String tagName) {
+        Tag<EntityType> tag = Bukkit.getTag(Tag.REGISTRY_ENTITY_TYPES,
+                NamespacedKey.minecraft(tagName), EntityType.class);
+        return tag != null && tag.isTagged(type);
     }
 
     private static int vanilla(ItemStack item, String family) {

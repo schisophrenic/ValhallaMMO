@@ -5,15 +5,19 @@ import me.athlaeos.valhallammo.crafting.dynamicitemmodifiers.implementations.ite
 import me.athlaeos.valhallammo.crafting.dynamicitemmodifiers.implementations.item_stats.DefaultAttributeRemove;
 import me.athlaeos.valhallammo.crafting.dynamicitemmodifiers.implementations.item_stats.DefaultAttributeScale;
 import me.athlaeos.valhallammo.item.ItemBuilder;
+import me.athlaeos.valhallammo.version.AttributeMappings;
 import me.athlaeos.valhallammo.localization.TranslationManager;
 import me.athlaeos.valhallammo.playerstats.format.StatFormat;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 
 public abstract class AttributeWrapper {
     private static final Map<String, Attribute> VANILLA_ATTRIBUTES = new HashMap<>();
@@ -74,13 +78,8 @@ public abstract class AttributeWrapper {
     public AttributeWrapper convertTo(String newName){
         this.convertTo = newName;
         if (newName == null) return this;
-        try {
-            this.vanillaAttribute = Attribute.valueOf(newName);
-            isVanilla = true;
-        } catch (IllegalArgumentException ignored){
-            this.vanillaAttribute = null;
-            isVanilla = false;
-        }
+        this.vanillaAttribute = getAttribute(newName);
+        isVanilla = this.vanillaAttribute != null;
         return this;
     }
 
@@ -136,12 +135,12 @@ public abstract class AttributeWrapper {
     public abstract AttributeWrapper copy();
 
     private static Attribute getAttribute(String attribute) {
-        // TODO: Replace this with a registry call instead of enum lookup, rn registry isn't viable with how the stat system is setup
+        if (attribute == null) return null;
         if (VANILLA_ATTRIBUTES.containsKey(attribute)) return VANILLA_ATTRIBUTES.get(attribute);
-        Attribute vanilla = null;
-        try {
-            vanilla = Attribute.valueOf(attribute);
-        } catch (IllegalArgumentException ignored) {}
+        AttributeMappings mapping = AttributeMappings.getAttributeMapping(attribute);
+        String key = mapping == null ? attribute : mapping.getAttributeKey();
+        NamespacedKey namespacedKey = key == null ? null : NamespacedKey.fromString(key.toLowerCase(Locale.ROOT));
+        Attribute vanilla = namespacedKey == null ? null : Registry.ATTRIBUTE.get(namespacedKey);
         VANILLA_ATTRIBUTES.put(attribute, vanilla);
         return vanilla;
     }
