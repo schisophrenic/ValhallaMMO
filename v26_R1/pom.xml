@@ -34,24 +34,6 @@
             <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>me.athlaeos</groupId>
-            <artifactId>valhallammo-v1_20_R4</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.athlaeos</groupId>
-            <artifactId>valhallammo-v1_21_R1</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.athlaeos</groupId>
-            <artifactId>valhallammo-v1_21_R2</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
     <build>
