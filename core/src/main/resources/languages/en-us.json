@@ -1884,8 +1884,8 @@
     "smithing_perk_4_description": "&7Greatly buffs the quality of your &eDiamond&7 items. &eYou are now able to repair items in your crafting grid without destroying enchantments",
     "smithing_perk_5_name": "&eHellforge",
     "smithing_perk_5_description": "&7Greatly buffs the quality of your &eNetherite&7 items.",
-    "smithing_perk_6_name": "&eDurin's Blessing",
-    "smithing_perk_6_description": "&7Having truly mastered your craft, all your creations benefit from a &e{smithing_genericcraftingskill_add} &7bonus in quality",
+    "smithing_perk_6_name": "&eMaster of All Metals",
+    "smithing_perk_6_description": "&7Master smithing: grants &e{smithing_genericcraftingskill_add} &7universal crafting quality and unlocks &eValhallaEquipment random attributes &7when crafting eligible weapons, armor, shields and tools.",
     "smithing_perk_prismarine_name": "&9Marine Smithing",
     "smithing_perk_prismarine_description": "&7Grants you the ability to craft tridents",
     "smithing_perk_enderic_name": "&dExotic Smithing",
@@ -1900,14 +1900,14 @@
     "alchemy_perk_a1_description": "&7Enhances the quality of your poisons. Your indirect hits with splash potions become stronger",
     "alchemy_perk_a2_name": "&dChemical Artillery",
     "alchemy_perk_a2_description": "&7Enhances the quality of your poisons further. Enhances your splash potion intensity, lingering potion duration and radius, and throwing force. ",
-    "alchemy_perk_b1_name": "&dEffective Catalysts",
-    "alchemy_perk_b1_description": "&7Enhances the quality of your beneficial potions. Speeds up potion brewing by &d{alchemy_brewingtimereduction_add}",
+    "alchemy_perk_b1_name": "&dArcane Infusions",
+    "alchemy_perk_b1_description": "&7Improves beneficial potion quality by &d{alchemy_buffbrewingskill_add}&7 and brewing speed by &d{alchemy_brewingtimereduction_add}&7. Unlocks &d1-5 random trinket-inspired attributes &7on successfully brewed potions, without a quality requirement. Attribute rolls are &d50% stronger &7than comparable armor properties.",
     "alchemy_perk_b2_name": "&dExotic Ingredients",
-    "alchemy_perk_b2_description": "&7Increases beneficial potion quality and the chance to not spend ingredients by &d{alchemy_brewingingredientsavechance_add}&7 and unlocks &dHaste&7 and &dHealth Boost&7 potion recipes",
+    "alchemy_perk_b2_description": "&7Increases beneficial potion quality and ingredient-saving chance by &d{alchemy_brewingingredientsavechance_add}&7, and unlocks Haste and Health Boost recipes. &dArcane Infusions: +1 additional random potion attribute.",
     "alchemy_perk_3_name": "&dMighty Mixtures",
-    "alchemy_perk_3_description": "&7Allows you to merge the effects of multiple potions into one, up to &d{alchemy_potioncombiningmaxcombinations_add}&7 times, at some loss of duration",
+    "alchemy_perk_3_description": "&7Allows combining up to &d{alchemy_potioncombiningmaxcombinations_add} &7potions with a duration penalty. &dArcane Infusions: +2 additional random potion attributes &7per brew, stacking with Exotic Ingredients.",
     "alchemy_perk_4_name": "&dPrima Materia",
-    "alchemy_perk_4_description": "&7Greatly buffs the quality of all your potions. Unlocks &dTransmutation",
+    "alchemy_perk_4_description": "&7Greatly improves potion quality and unlocks &dTransmutation&7. &dArcane Infusions mastery: sets the minimum random-attribute count to 20 per brew. &7Additive perks still apply (up to 23 with the existing +1 and +2 perks).",
     "alchemy_perk_combo_name": "&dEtching Venom",
     "alchemy_perk_combo_description": "&7Adds &d{lightweapons_coatingcharges_add} &7charges to your Weapon Coating ability. You unlock recipes for a couple simple poisons that can be crafted without a brewing stand",
     "mining_perk_1_name": "&eBrittle Rock",
@@ -3193,9 +3193,11 @@
       "&d{alchemy_throwvelocity_add} &7Throwing Force"
     ],
     "alchemy_perk_b1_messages": [
-      "&d✰ &5Effective Catalysts &d✰",
+      "&d✰ &5Arcane Infusions &d✰",
       "&d{alchemy_buffbrewingskill_add} &7Beneficial Potion Quality",
-      "&d{alchemy_brewingtimereduction_add} &7Brewing Speed"
+      "&d{alchemy_brewingtimereduction_add} &7Brewing Speed",
+      "&dUnlocked: &7+1-5 random potion attributes",
+      "&7No quality required; &d150% &7of comparable armor strength"
     ],
     "alchemy_perk_b2_messages": [
       "&d✰ &5Exotic Ingredients &d✰",
@@ -3203,7 +3205,8 @@
       "&d{alchemy_brewingingredientsavechance_add} &7Ingredient Save Chance",
       "&dPotion Recipes Unlocked:",
       "&7- Haste (Awkward Potion + Nether Quartz)",
-      "&7- Health Boost (Awkward Potion + Sweet Berries)"
+      "&7- Health Boost (Awkward Potion + Sweet Berries)",
+      "&dArcane Infusions: &7+1 extra potion attribute"
     ],
     "alchemy_perk_3_messages": [
       "&d✰ &5Mighty Mixtures &d✰",
@@ -3213,13 +3216,16 @@
       "&7- 20% duration loss",
       "&8Take a potion and right-click it",
       "&8on top of another potion in your",
-      "&8inventory to merge them."
+      "&8inventory to merge them.",
+      "&dArcane Infusions: &7+2 extra potion attributes"
     ],
     "alchemy_perk_4_messages": [
       "&d✰ &5Prima Materia &d✰",
       "&d{alchemy_genericbrewingskill_add} &7Potion Quality",
       "&dPotion Recipes Unlocked:",
-      "&7- &#0077ffDraught of Midas &7(Nether Star)"
+      "&7- &#0077ffDraught of Midas &7(Nether Star)",
+      "&dArcane Mastery: &7minimum 20 random potion attributes",
+      "&7Additive perks stack; with +1 and +2, &d23 effects"
     ],
     "alchemy_perk_combo_messages": [
       "&d✰ &5Etching Venom &d✰",
@@ -3319,8 +3325,9 @@
       "&e{smithing_netheritecraftingskill_add} &7Netherite Quality"
     ],
     "smithing_perk_6_messages": [
-      "&e✰ &6Durin's Blessing &e✰",
-      "&e{smithing_genericcraftingskill_add} &7Universal Quality"
+      "&e✰ &6Master of All Metals &e✰",
+      "&e{smithing_genericcraftingskill_add} &7Universal Quality",
+      "&eUnlocked: &7ValhallaEquipment crafting attributes"
     ],
     "smithing_perk_prismarine_messages": [
       "&e✰ &6Marine Smithing &e✰",
