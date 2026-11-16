@@ -281,6 +281,26 @@ item_skill_requirement_warning_delay: 600000 # Players are warned of their equip
 # compared to additive multipliers.
 damage_multipliers_multiplicative: false
 
+# APOTHIC-INSPIRED COMBAT (armor formula stays unchanged)
+# Multiple crits beyond 100% chance add bonus damage with diminishing returns.
+apothic_multicrit_enabled: true
+apothic_multicrit_max_hits: 5
+apothic_multicrit_diminishing: 0.85 # each extra crit contributes 85% of the previous crit bonus
+
+# Overheal converts a portion of actual health damage into vanilla golden absorption.
+# Total golden absorption after a proc is limited to 50% of the attacker's max HP by default.
+apothic_overheal_enabled: true
+apothic_overheal_max_health_fraction: 0.5
+
+# Ghost Health is an independent, invisible shield that takes hits after golden
+# absorption and before real HP. The GHOST_HEALTH stat sets its capacity.
+# It regains 10% of its maximum per second after 5 seconds without taking damage.
+apothic_ghost_health_enabled: true
+apothic_ghost_health_regen_delay_seconds: 5
+apothic_ghost_health_regen_fraction_per_second: 0.1
+
+
+
 damage_indicator_format: "&c%icon%%dps%%mitigated%%crit%"
 damage_indicator_crit: " <lang.damage_indicator_crit>" # The placeholder for
 dummies_only: true # If true, damage indicators will only appear over armor stands marked by the plugin as dummies. If you want no damage indicators at all, empty the format.
