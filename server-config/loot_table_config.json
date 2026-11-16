@@ -1,0 +1,202 @@
+{
+  "blockLootTables": {
+    "SAND": "digging",
+    "DIRT_PATH": "digging",
+    "MANGROVE_LEAVES": "woodcutting",
+    "DIRT": "digging",
+    "JUNGLE_LEAVES": "woodcutting",
+    "FLOWERING_AZALEA_LEAVES": "woodcutting",
+    "MYCELIUM": "digging",
+    "RED_SAND": "digging",
+    "DARK_OAK_LEAVES": "woodcutting",
+    "GRAVEL": "digging",
+    "OAK_LEAVES": "woodcutting",
+    "PODZOL": "digging",
+    "SPRUCE_LEAVES": "woodcutting",
+    "COARSE_DIRT": "digging",
+    "ACACIA_LEAVES": "woodcutting",
+    "GRASS_BLOCK": "digging",
+    "BIRCH_LEAVES": "woodcutting",
+    "AZALEA_LEAVES": "woodcutting",
+    "MUD": "digging"
+  },
+  "entityLootTables": {},
+  "lootTableAdditions": [
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/bastion_treasure"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/village/village_weaponsmith"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/ruined_portal"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "archaeology/desert_pyramid"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/stronghold_corridor"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/simple_dungeon"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "archaeology/trail_ruins_rare"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/pillager_outpost"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/stronghold_library"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/underwater_ruin_big"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "archaeology/ocean_ruin_warm"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/nether_bridge"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "archaeology/ocean_ruin_cold"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/woodland_mansion"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/igloo_chest"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/village/village_armorer"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/buried_treasure"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/abandoned_mineshaft"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/ancient_city"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/end_city_treasure"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/shipwreck_treasure"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/spawn_bonus_chest"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/village/village_toolsmith"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/jungle_temple"
+      },
+      "valhallaequipment"
+    ],
+    [
+      {
+        "namespace": "minecraft",
+        "key": "chests/desert_pyramid"
+      },
+      "valhallaequipment"
+    ]
+  ],
+  "fishingLootTableTreasure": "fishing"
+}
