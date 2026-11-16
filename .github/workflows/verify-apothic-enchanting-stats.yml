@@ -1,0 +1,63 @@
+name: Validate Apotheosis Enchanting Stat Perks
+on:
+  push:
+    branches: [feature/apotheosis-attributes-integration]
+    paths:
+      - 'core/src/main/java/me/athlaeos/valhallammo/playerstats/**'
+      - 'core/src/main/java/me/athlaeos/valhallammo/item/ItemAttributesRegistry.java'
+      - 'core/src/main/resources/skills/enchanting_progression.yml'
+      - 'core/src/main/resources/languages/en-us.json'
+      - '.github/workflows/verify-apothic-enchanting-stats.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Validate language keys, independent perks and tree connections
+        run: |
+          python3 -m pip -q install pyyaml
+          python3 - <<'PY'
+          import json, yaml
+          from pathlib import Path
+          root=Path('core/src/main/resources')
+          skills=yaml.safe_load((root/'skills/enchanting_progression.yml').read_text())
+          language=json.loads((root/'languages/en-us.json').read_text())
+          perks=skills['perks']
+          ids=['eterna','quanta','arcana']
+          previous='enchanting_perk_b1'
+          coordinates={}
+          for n in ids:
+              id='enchanting_perk_apothic_'+n
+              entry=perks[id]
+              assert entry['requireperk_all']==[previous], (id,'bad prerequisite')
+              assert int(entry['required_lv']) <= skills['experience']['max_level'], (id,'out of range')
+              assert language['stringTranslations'][id+'_name']
+              assert language['stringTranslations'][id+'_description']
+              assert language['stringListTranslations'][id+'_messages']
+              assert language['stringTranslations']['attribute_enchanting_'+n]
+              assert entry['perk_rewards']['enchanting_apothic'+n+'_add']>0
+              previous=id
+          # Do not overwrite an existing skill icon or another perk in this template.
+          for id,entry in perks.items():
+              if 'coords' not in entry: continue
+              pos=str(entry['coords'])
+              if pos in coordinates:
+                  # NG perks deliberately share the same location.
+                  assert 'ng' in id and 'ng' in coordinates[pos], (id, coordinates[pos],pos)
+              else: coordinates[pos]=id
+          assert 'enchanting_perk_ng1' in perks
+          assert 'enchanting_perk_sharpnesses' in perks
+          print('OK: 3 new separate profile-stat perks, translations and non-NG prerequisites.')
+          PY
+      - name: Compile Maven core
+        run: mvn -B -ntp -DskipTests -pl core -am compile

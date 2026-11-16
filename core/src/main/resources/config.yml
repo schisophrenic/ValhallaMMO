@@ -69,6 +69,14 @@ cooldown_status_duration: 100 # Duration (in ticks) for which the cooldown messa
 armor_scale: 40 # Defines the "maximum" armor displayed in the armor bar. Whatever number is defined here equals 10 full armor icons,
 # so by default 20 armor points will grant roughly 5 armor icons. Of course, players can still exceed this value, it will just not be displayed.
 
+# HEALTH DISPLAY (visual only)
+# Display real max HP, including values above 100, as exactly ten red hearts in one row.
+# This does not change actual player health, healing, incoming damage, or the max-health attribute.
+# Cosmetic health HUD compression. Displays exactly 10 red hearts (one row) even with 100+ max HP.
+# This does not change actual health, maximum health, damage, or regeneration.
+# Disable if another plugin, such as AuraSkills, already manages Player health scaling.
+health_bar_scaling_enabled: true
+
 # The way boss bars are presented for active global buffs
 # Each global buff is presented for an amount of time, then continues to the next, and once all buffs are presented it clears the bar for
 # another period after which the cycle repeats
@@ -269,6 +277,26 @@ item_skill_requirement_warning_delay: 600000 # Players are warned of their equip
 # compared to additive multipliers.
 damage_multipliers_multiplicative: false
 
+# APOTHIC-INSPIRED COMBAT (armor formula stays unchanged)
+# Multiple crits beyond 100% chance add bonus damage with diminishing returns.
+apothic_multicrit_enabled: true
+apothic_multicrit_max_hits: 5
+apothic_multicrit_diminishing: 0.85 # each extra crit contributes 85% of the previous crit bonus
+
+# Overheal converts a portion of actual health damage into vanilla golden absorption.
+# Total golden absorption after a proc is limited to 50% of the attacker's max HP by default.
+apothic_overheal_enabled: true
+apothic_overheal_max_health_fraction: 0.5
+
+# Ghost Health is an independent, invisible shield that takes hits after golden
+# absorption and before real HP. The GHOST_HEALTH stat sets its capacity.
+# It regains 10% of its maximum per second after 5 seconds without taking damage.
+apothic_ghost_health_enabled: true
+apothic_ghost_health_regen_delay_seconds: 5
+apothic_ghost_health_regen_fraction_per_second: 0.1
+
+
+
 damage_indicator_format: "&c%icon%%dps%%mitigated%%crit%"
 damage_indicator_crit: " <lang.damage_indicator_crit>" # The placeholder for
 dummies_only: true # If true, damage indicators will only appear over armor stands marked by the plugin as dummies. If you want no damage indicators at all, empty the format.
@@ -363,29 +391,40 @@ dodge_message: '<lang.status-attack-dodged>'
 power_attack_shockwave_particle: CRIT
 
 custom_damage_system: true # If false, there is no custom damage system
-# Damage calculation for armor and armor toughness. Armor is effective only against the given damage sources,
-# everything else is not mitigated by how many armor points you have.
-# Valid arguments are %damage%, %toughness%, and %armor%
-# This default formula doubles the player's effective HP every 10 armor points, or up to 6x eHP at 50 armor,
-# and further reduces heavy damage with toughness. Toughness is not very effective if the player doesn't have
-# a lot of armor or if the player doesn't take very heavy damage. This formula normally breaks at extreme damage numbers,
-# but damage reduction cannot go below a certain fraction to make sure the formula can never go into the negatives
-damage_formula_physical: '(%damage% * (15 / (15 + %armor%)) * (1 / (1 + (0.001 * %toughness% * %damage%)))) - %absorption%'
-damage_formula_mode: SET # Valid modes are SET and MULTIPLY
-# SET sets physical damage to the outcome of this formula. The outcome cannot go below 0
-# MULTIPLY multiplies the original damage and sets that as the final damage. The outcome cannot go below 0
-damage_reduction_cap: 0.1 # The final damage cannot go below this fraction of the original damage due to armor
+# Physical armor formula. HYBRID is the new default for 100+ HP combat:
+#   curve = 15 + hybrid_armor_growth * max(0, damage - 20)
+#   post_armor_damage = damage * curve / (curve + armor) / (1 + toughness * hybrid_toughness_factor)
+# Armor mitigates ordinary hits; large hits progressively challenge armor.
+# Toughness adds a separate reduction that does not grow indefinitely with hit size.
+# Damage arrives here after resistance and armor penetration, before DAMAGE_ABSORPTION and shields.
+# You may still use a custom expression with %damage%, %armor%, %toughness%, %absorption%.
+# Existing custom expressions remain supported. HYBRID always returns a damage amount (SET).
+damage_formula_physical: HYBRID
+hybrid_armor_growth: 0.25 # armor loses relative effectiveness against hits over 20 damage
+hybrid_toughness_factor: 0.015 # each toughness point contributes to separate mitigation
+damage_formula_mode: SET # Custom expressions only: SET or MULTIPLY
+# SET returns the damage from the expression; MULTIPLY interprets its result as a multiplier
+damage_reduction_cap: 0.1 # Armor/toughness cannot reduce damage below 10% of post-resistance damage
 # Damage mitigation applies before the armor check, so it can still reduce damage taken
 
-# The types of damage armor is effective against. Formatted like TYPE:ARMOREFFECTIVENESS, where ARMOREFFECTIVENESS represents how effective the armor
-# is against this damage type. 1 being 100% effective, no debuff. 0.5 being half as effective. Can be considered armor penetration native to damage types
+# Damage-type effectiveness of the defender's ARMOR AND TOUGHNESS.
+# 1 = full armor and toughness; 0.25 = only 25% of each stat applies.
+# This is NOT a fixed percent of incoming damage blocked. Each type also
+# retains its own elemental resistance and general damage resistance.
 armor_effective_types:
-  - PROJECTILE:1
-  - FALLING:1
-  - BLUDGEONING:0.7 # Custom damage type added by the plugin, is more effective against armor because it benefits from 30% reduced armor by default
   - MELEE:1
-  - EXPLOSION:0.7
-  - FIRE:0.5 # Fire is still reduced as physical damage, but only as if the player was wearing half as much armor
+  - BLUDGEONING:0.8
+  - LIGHTNING:0.25
+  - FREEZING:0.25
+  - FIRE:0.25
+  - BLEED:0.25
+  - POISON:0.1
+  - NECROTIC:0.1
+  - EXPLOSION:0.1
+  - RADIANT:0.1
+  - MAGIC:0.05
+  - PROJECTILE:0.05
+  - FALLING:1 # unchanged; falling damage was not included in this rebalance
 negative_armor_damage_buff: 0.025 # If armor penetration (or negative armor) results in a negative armor value on the damaged target,
 # their damage taken increases by this value for each point of armor they are in the negative. (-10 armor would result in a 25% damage taken increase)
 
@@ -528,3 +567,17 @@ model_data_tinker_view: 3511002
 # If true, items crafted with a custom crafting method will be dropped on top of the crafting block. If false, they will
 # be added to the player's inventory.
 craft_item_drop: true
+enchantment_priority:
+  defense_order: [protection, magic_protection, projectile_protection, blast_protection, fire_protection]
+  offense_order: [sharpness, smite, bane_of_arthropods]
+  enabled: true
+  defense:
+    '1': [10]
+    '2': [5, 5]
+    '3': [5, 3, 2]
+    '4': [4, 2, 2, 2]
+    '5': [3, 2, 2, 2, 1]
+  offense:
+    '1': [10]
+    '2': [5, 5]
+    '3': [5, 3, 2]

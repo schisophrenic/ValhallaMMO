@@ -107,3 +107,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 .paper-nms
+
+# Maven Flatten Plugin output (generated; do not commit)
+/**/.flattened-pom.xml
