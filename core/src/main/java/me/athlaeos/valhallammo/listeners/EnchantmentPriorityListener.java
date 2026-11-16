@@ -26,16 +26,28 @@ public final class EnchantmentPriorityListener implements Listener {
             "projectile_protection", "blast_protection", "fire_protection");
     private static final List<String> OFFENSE = List.of("sharpness", "smite", "bane_of_arthropods");
     private final boolean enabled;
+    private final List<String> defenseOrder;
+    private final List<String> offenseOrder;
     private final Map<Integer, double[]> defense;
     private final Map<Integer, double[]> offense;
 
     public EnchantmentPriorityListener() {
         ConfigurationSection root = ValhallaMMO.getPluginConfig().getConfigurationSection("enchantment_priority");
         enabled = root == null || root.getBoolean("enabled", true);
+        defenseOrder = order(root, "defense_order", DEFENSE);
+        offenseOrder = order(root, "offense_order", OFFENSE);
         defense = read(root == null ? null : root.getConfigurationSection("defense"),
                 new int[][] {{10}, {5,5}, {5,3,2}, {4,2,2,2}, {3,2,2,2,1}});
         offense = read(root == null ? null : root.getConfigurationSection("offense"),
                 new int[][] {{10}, {5,5}, {5,3,2}});
+    }
+
+    private static List<String> order(ConfigurationSection root, String key, List<String> fallback) {
+        if (root == null) return fallback;
+        List<String> entries = root.getStringList(key);
+        if (entries.size() != fallback.size() || !entries.containsAll(fallback)
+                || entries.stream().distinct().count() != fallback.size()) return fallback;
+        return List.copyOf(entries);
     }
 
     private static Map<Integer, double[]> read(ConfigurationSection section, int[][] fallback) {
@@ -73,7 +85,7 @@ public final class EnchantmentPriorityListener implements Listener {
 
     private Map<String, Double> weights(ItemStack item, boolean armor) {
         List<String> present = new ArrayList<>();
-        for (String family : armor ? DEFENSE : OFFENSE) {
+        for (String family : armor ? defenseOrder : offenseOrder) {
             if (level(item, family) > 0) present.add(family);
         }
         if (present.isEmpty()) return Map.of();
