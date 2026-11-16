@@ -558,9 +558,11 @@ perks:
     other_levels_required:
       - FARMING:50
   # Apotheosis enchanting path: separate table stats, not NG quality perks.
-  # Positions intentionally use unused cells of this branch's 0..10 grid.
-  # The redesigned skill-tree planner on its own branch needs a layout sync
-  # before those branches are merged; existing skill layouts are untouched.
+  # These coordinates fit the bundled LEGACY progression YAML.
+  # The overhauled tree planner on this branch has the same perk IDs and
+  # rewards, with positions 5,10 -> 7,10 -> 9,10 instead.
+  # Deploy your custom exported progression YAML using these perk IDs.
+  # Existing unrelated skill perks, tree connections and NG perks stay intact.
   enchanting_perk_apothic_eterna:
     icon: BOOKSHELF
     coords: "10,6"
