@@ -125,6 +125,8 @@ public class EntityDamagedListener implements Listener {
                 applyImmunity = true;
             }
             if (e instanceof EntityDamageByEntityEvent && e.getFinalDamage() <= 0.000001 && l instanceof Player p && p.isBlocking()) return; // blocking with shield damage reduction
+            CombatShields shields = ValhallaMMO.getInstance().getCombatShields();
+            if (shields != null && customDamage > 0) shields.markHit(l);
 
             if (Timer.isCooldownPassed(e.getEntity().getUniqueId(), "cooldown_oneshot_protection") && ((lastDamager == null || EntityClassification.matchesClassification(lastDamager.getType(), EntityClassification.UNALIVE)) && environmentalOneShotProtection) || ((pvpOneShotProtection && lastDamager instanceof Player) || (pveOneShotProtection && lastDamager != null && !EntityClassification.matchesClassification(lastDamager.getType(), EntityClassification.UNALIVE)))) {
                 double oneShotProtectionFraction = AccumulativeStatManager.getCachedRelationalStats("ONESHOT_PROTECTION_FRACTION", l, lastDamager, 10000, true);
@@ -148,14 +150,30 @@ public class EntityDamagedListener implements Listener {
                 }
             }
 
+            // Let normal golden absorption go first, then virtual ghost health,
+            // then the player's real HP. This does not bypass armor/resistances.
+            double currentAbsorption = absorptionTracker.getOrDefault(l.getUniqueId(), l.getAbsorptionAmount());
+            double wouldHitHealth = Math.max(0, customDamage - Math.max(0, currentAbsorption));
+            if (shields != null && wouldHitHealth > 0 && !trueDamage.contains(damageCause)) {
+                double afterGhost = shields.absorbGhost(l, wouldHitHealth);
+                customDamage -= wouldHitHealth - afterGhost;
+            }
+            if (customDamage <= 0) e.setDamage(0);
+            applyImmunity = applyImmunity || l.getHealth() + currentAbsorption > customDamage;
+
             final double damage = customDamage;
             if (applyImmunity){
                 double iFrameMultiplier = 1 + AccumulativeStatManager.getCachedRelationalStats("IMMUNITY_FRAME_MULTIPLIER", l, lastDamager, 10000, true);
                 int iFrameBonus = (int) AccumulativeStatManager.getCachedRelationalStats("IMMUNITY_FRAME_BONUS", l, lastDamager, 10000, true);
                 int iFrames = isMarkedNoImmunityOnNextDamageInstance(l, damageCause) ? 0 : (int) Math.max(0, iFrameMultiplier * (Math.max(0, 10 + iFrameBonus)));
                 unmarkNextDamageInstanceNoImmunity(l, damageCause);
-                double predictedAbsorption = absorptionTracker.getOrDefault(l.getUniqueId(), l.getAbsorptionAmount()) - damage;
-                double predictedHealth = healthTracker.getOrDefault(l.getUniqueId(), l.getHealth()) - (predictedAbsorption >= 0 ? 0 : -predictedAbsorption);
+                double startingHealth = healthTracker.getOrDefault(l.getUniqueId(), l.getHealth());
+                double predictedAbsorption = currentAbsorption - damage;
+                double predictedHealth = startingHealth - (predictedAbsorption >= 0 ? 0 : -predictedAbsorption);
+                if (shields != null && type != null && type.canLifeSteal()
+                        && lastDamager instanceof LivingEntity attacker && !EntityClassification.matchesClassification(l.getType(), EntityClassification.UNALIVE)) {
+                    shields.recordDamage(l, attacker, Math.min(startingHealth, Math.max(0, startingHealth - predictedHealth)));
+                }
                 if (predictedAbsorption > 0) absorptionTracker.put(l.getUniqueId(), predictedAbsorption);
                 healthTracker.put(l.getUniqueId(), predictedHealth); // if two damage instances occur in rapid succession (such as with bonus damage types)
                 // then the predicted health of the entity is recorded and used for additional damage instances. Without this, preceding damage instances
@@ -173,6 +191,7 @@ public class EntityDamagedListener implements Listener {
                         l.setAbsorptionAmount(Math.max(0, predictedAbsorption));
                         l.setHealth(Math.max(damageCause.equals("POISON") ? 1 : 0, Math.min(maxHealth, predictedHealth)));
                     }
+                    if (shields != null) shields.finishDamage(l, Math.max(0, healthBefore - l.getHealth()));
                     customDamageCauses.remove(l.getUniqueId());
                     healthTracker.remove(l.getUniqueId());
                     absorptionTracker.remove(l.getUniqueId());
@@ -181,6 +200,14 @@ public class EntityDamagedListener implements Listener {
                 ValhallaMMO.getInstance().getServer().getScheduler().runTaskLater(ValhallaMMO.getInstance(), () -> {
                     Runnable r = damageProcesses.get(l.getUniqueId());
                     if (r != null) r.run();
+                }, 1L);
+            } else if (shields != null && type != null && type.canLifeSteal()
+                    && lastDamager instanceof LivingEntity attacker && !EntityClassification.matchesClassification(l.getType(), EntityClassification.UNALIVE)) {
+                // Lethal hits are processed by vanilla rather than the delayed
+                // health tracker; credit the actual HP available, not raw damage.
+                final double possibleHealthDamage = Math.min(l.getHealth(), Math.max(0, damage - Math.max(0, currentAbsorption)));
+                ValhallaMMO.getInstance().getServer().getScheduler().runTaskLater(ValhallaMMO.getInstance(), () -> {
+                    if (!e.isCancelled()) shields.recover(attacker, l, possibleHealthDamage);
                 }, 1L);
             }
         }
