@@ -658,6 +658,8 @@
     "potion_name_bleed_duration": "Bleeding",
     "potion_name_crit_chance": "Focus",
     "potion_name_crit_damage": "Focus",
+    "potion_name_resistance_pierce": "Exposure",
+    "potion_name_resistance_shred": "Rending",
     "potion_name_armor_penetration_flat": "Crushing",
     "potion_name_light_armor_penetration_flat": "Crushing",
     "potion_name_heavy_armor_penetration_flat": "Crushing",
