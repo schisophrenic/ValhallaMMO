@@ -15013,6 +15013,63 @@
         "locks": [],
         "ng": 0,
         "cl": false
+      },
+      {
+        "id": "enchanting_perk_apothic_eterna",
+        "x": 5,
+        "y": 10,
+        "icon": "BOOKSHELF",
+        "name": "&dEterna Attunement",
+        "desc": "&7+8 Eterna. Increases Apotheosis-style enchanting power when integrated; does not alter NG tiers or Enchanting Quality.",
+        "cost": 1,
+        "hidden": false,
+        "lv": 35,
+        "all": [
+          "enchanting_perk_b1"
+        ],
+        "one": [],
+        "other": {},
+        "locks": [],
+        "ng": 0,
+        "cl": true
+      },
+      {
+        "id": "enchanting_perk_apothic_quanta",
+        "x": 7,
+        "y": 10,
+        "icon": "AMETHYST_SHARD",
+        "name": "&5Quanta Attunement",
+        "desc": "&7+12 Quanta. Influences enchanting randomness when the optional Apothic enchanting integration is enabled.",
+        "cost": 1,
+        "hidden": false,
+        "lv": 55,
+        "all": [
+          "enchanting_perk_apothic_eterna"
+        ],
+        "one": [],
+        "other": {},
+        "locks": [],
+        "ng": 0,
+        "cl": true
+      },
+      {
+        "id": "enchanting_perk_apothic_arcana",
+        "x": 9,
+        "y": 10,
+        "icon": "ENCHANTED_BOOK",
+        "name": "&6Arcana Attunement",
+        "desc": "&7+15 Arcana. Improves rare enchantment selection when integrated; cannot bypass tier perks or Enchanting Quality.",
+        "cost": 1,
+        "hidden": false,
+        "lv": 75,
+        "all": [
+          "enchanting_perk_apothic_quanta"
+        ],
+        "one": [],
+        "other": {},
+        "locks": [],
+        "ng": 0,
+        "cl": true
       }
     ]
   },
