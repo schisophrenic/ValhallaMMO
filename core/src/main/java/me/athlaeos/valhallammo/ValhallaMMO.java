@@ -63,6 +63,7 @@ public class ValhallaMMO extends JavaPlugin {
     private static NMS nms = null;
     private static Paper paper = null;
     private static PacketListener packetListener = null;
+    private HealthBarScalingListener healthBarScalingListener;
     private static ValhallaMMO instance;
     private static boolean resourcePackConfigForced = false;
     private static final Map<Class<? extends PluginHook>, PluginHook> activeHooks = new HashMap<>();
@@ -330,6 +331,11 @@ public class ValhallaMMO extends JavaPlugin {
         }
 
         worldBlacklist.addAll(pluginConfig.getStringList("world_blacklist"));
+        if (pluginConfig.getBoolean("health_bar_scaling_enabled", true)) {
+            healthBarScalingListener = new HealthBarScalingListener(this);
+            registerListener(healthBarScalingListener);
+            healthBarScalingListener.applyToOnlinePlayers();
+        }
         if (PotionEffectRegistry.getCustomEffectDisplay() != null) PotionEffectRegistry.getCustomEffectDisplay().start();
         ItemUtils.startProjectileRunnableCache();
         GlobalEffect.initializeRunnable();
@@ -347,6 +353,7 @@ public class ValhallaMMO extends JavaPlugin {
     public void onDisable() {
         if (!enabled) return;
         disabling = true;
+        if (healthBarScalingListener != null) healthBarScalingListener.restoreOnlinePlayers();
         ProfileRegistry.getPersistence().saveAllProfiles(false);
         if (ProfileRegistry.getPersistence() instanceof Database database) {
             try {
