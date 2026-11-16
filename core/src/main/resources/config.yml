@@ -564,6 +564,8 @@ craft_item_drop: true
 # If EnchantsSquared is enabled, its priority_scaling settings take ownership.
 # Enchantments are NOT removed or altered, only their combat effects are weighted.
 enchantment_priority:
+  defense_order: [protection, magic_protection, projectile_protection, blast_protection, fire_protection]
+  offense_order: [sharpness, smite, bane_of_arthropods]
   enabled: true
   defense:
     '1': [10]
