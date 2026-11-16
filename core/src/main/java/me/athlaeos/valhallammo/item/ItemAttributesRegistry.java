@@ -93,6 +93,12 @@ public class ItemAttributesRegistry {
         register(new AttributeDisplayWrapper("ALCHEMY_QUALITY_FRACTION", StatFormat.PERCENTILE_BASE_1_P1, "\uEE30", (i) -> i >= 0).addModifier(Material.BREWING_STAND));
         register(new AttributeDisplayWrapper("ENCHANTING_QUALITY", StatFormat.INT, "\uEE31", (i) -> i >= 0).addModifier(Material.ENCHANTING_TABLE, 1, 10));
         register(new AttributeDisplayWrapper("ENCHANTING_QUALITY_FRACTION", StatFormat.PERCENTILE_BASE_1_P1, "\uEE32", (i) -> i >= 0).addModifier(Material.ENCHANTING_TABLE));
+        // Apotheosis-inspired table stats in points. Registered for custom
+        // equipment/trinket modifiers; no default randomized gear rolls.
+        // Do not register them as enchantment levels or vanilla attributes.
+        register(new AttributeDisplayWrapper("ENCHANTING_ETERNA", StatFormat.FLOAT_P2, "✦", (i) -> i >= 0));
+        register(new AttributeDisplayWrapper("ENCHANTING_QUANTA", StatFormat.FLOAT_P2, "✧", (i) -> i >= 0));
+        register(new AttributeDisplayWrapper("ENCHANTING_ARCANA", StatFormat.FLOAT_P2, "✶", (i) -> i >= 0));
         register(new AttributeDisplayWrapper("ANVIL_QUALITY_FLAT", StatFormat.INT, "\uEE33", (i) -> i >= 0).addModifier(Material.ANVIL, 1, 10));
         register(new AttributeDisplayWrapper("ANVIL_QUALITY_FRACTION", StatFormat.PERCENTILE_BASE_1_P1, "\uEE34", (i) -> i >= 0).addModifier(Material.ANVIL));
         register(new AttributeDisplayWrapper("BREWING_INGREDIENT_CONSUMPTION", StatFormat.PERCENTILE_BASE_1_P1, "\uEE35", (i) -> i <= 0).addModifier(Material.GLASS_BOTTLE));
