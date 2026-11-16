@@ -1,0 +1,27 @@
+name: Test ValhallaMMO Enchantment Priority Fallback BETA
+
+on:
+  push:
+    branches:
+      - feature/enchantment-priority-compat-26-3
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Compile core and dependencies (beta)
+        run: mvn -B -ntp -pl core -am -DskipTests -Dgpg.skip=true clean package
+      - name: Confirm priority class compiled
+        run: |
+          test -f core/target/classes/me/athlaeos/valhallammo/listeners/EnchantmentPriorityListener.class
