@@ -105,6 +105,19 @@ hybrid_toughness_factor: 0.015
 damage_reduction_cap: 0.1
 ```
 
+The approved damage-type armor effectiveness values are:
+
+| Effectiveness | Damage types |
+| ---: | --- |
+| 100% | Melee |
+| 80% | Bludgeoning |
+| 25% | Lightning, Freezing, Fire, Bleed |
+| 10% | Poison, Necrotic, Explosion, Radiant |
+| 5% | Magic, Projectile |
+| 100% (unchanged) | Falling |
+
+These percentages **scale the armor and toughness stats used by the hybrid formula**, and are not fixed percentage damage reductions. For example, 100 armor and 40 toughness against lightning are treated as 25 armor and 10 toughness. Damage-type-specific and general resistances are still calculated first. Types not listed in `armor_effective_types` bypass the armor and toughness step.
+
 The attacker's existing armor penetration is resolved before this formula. The per-damage-type `armor_effective_types` scales effective armor and toughness as before. Higher damage gradually weakens the *relative effectiveness of armor*, but toughness has an independent, consistent mitigation factor rather than scaling its effect directly with each extra damage point. Its **absolute** damage prevented grows for larger hits. The 10% minimum damage floor remains in place, applied to post-resistance incoming damage. The existing `DAMAGE_ABSORPTION` stat is subtracted after formula evaluation; golden absorption and Ghost Health are handled afterwards by the damage listener.
 
 When `damage_formula_physical` is a custom expression instead of `HYBRID`, existing `damage_formula_mode: SET|MULTIPLY` remains supported. The old default expression included `-%absorption%`, so the listener now avoids subtracting that stat twice when the custom expression explicitly includes `%absorption%`.
