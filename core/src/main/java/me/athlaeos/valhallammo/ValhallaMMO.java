@@ -64,6 +64,7 @@ public class ValhallaMMO extends JavaPlugin {
     private static Paper paper = null;
     private static PacketListener packetListener = null;
     private HealthBarScalingListener healthBarScalingListener;
+    private CombatShields combatShields;
     private static ValhallaMMO instance;
     private static boolean resourcePackConfigForced = false;
     private static final Map<Class<? extends PluginHook>, PluginHook> activeHooks = new HashMap<>();
@@ -84,6 +85,10 @@ public class ValhallaMMO extends JavaPlugin {
 
     public static ValhallaMMO getInstance() {
         return instance;
+    }
+
+    public CombatShields getCombatShields() {
+        return combatShields;
     }
 
     private static boolean enabled = true;
@@ -263,6 +268,8 @@ public class ValhallaMMO extends JavaPlugin {
         registerListener(new EntitySpawnListener());
         registerListener(new HandSwitchListener());
         registerListener(new HealthRegenerationListener());
+        combatShields = new CombatShields(this);
+        registerListener(combatShields);
         registerListener(new ImmersiveRecipeListener());
         registerListener(new InteractListener());
         registerListener(new ItemConsumptionListener());
@@ -354,6 +361,7 @@ public class ValhallaMMO extends JavaPlugin {
         if (!enabled) return;
         disabling = true;
         if (healthBarScalingListener != null) healthBarScalingListener.restoreOnlinePlayers();
+        if (combatShields != null) combatShields.shutdown();
         ProfileRegistry.getPersistence().saveAllProfiles(false);
         if (ProfileRegistry.getPersistence() instanceof Database database) {
             try {
