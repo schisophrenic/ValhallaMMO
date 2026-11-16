@@ -194,6 +194,8 @@ public class ItemAttributesRegistry {
 
         register(new AttributeDisplayWrapper("ATTACK_REACH_MULTIPLIER", StatFormat.PERCENTILE_BASE_1_P1, "\uEE9D", (i) -> i >= 0).addModifier(Material.ENDER_PEARL, 0.1, 1));
         register(new AttributeDisplayWrapper("SHIELD_DISARMING", StatFormat.DIFFERENCE_TIME_SECONDS_BASE_20_P1, "\uEE9E", (i) -> i >= 0).addModifier(Material.NETHERITE_AXE, 1, 10));
+        register(new AttributeDisplayWrapper("OVERHEAL", StatFormat.PERCENTILE_BASE_1_P1, "✚", (i) -> i >= 0));
+        register(new AttributeDisplayWrapper("GHOST_HEALTH", StatFormat.FLOAT_P2, "✧", (i) -> i >= 0));
         register(new AttributeDisplayWrapper("LIFE_STEAL", StatFormat.PERCENTILE_BASE_1_P2, "\uEE9F", (i) -> i >= 0).addModifier(Material.GHAST_TEAR, 0.001, 0.01));
         register(new AttributeDisplayWrapper("PVP_RESISTANCE", StatFormat.PERCENTILE_BASE_1_P1, "\uEEA3", (i) -> i >= 0).addModifier(Material.IRON_CHESTPLATE));
         register(new AttributeDisplayWrapper("DAMAGE_PLAYER", StatFormat.PERCENTILE_BASE_1_P1, "\uEEA4", (i) -> i >= 0).addModifier(Material.IRON_SWORD));
