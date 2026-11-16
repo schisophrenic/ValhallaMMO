@@ -11,6 +11,7 @@ import me.athlaeos.valhallammo.playerstats.profiles.ProfileCache;
 import me.athlaeos.valhallammo.playerstats.profiles.implementations.PowerProfile;
 import me.athlaeos.valhallammo.potioneffects.EffectResponsibility;
 import me.athlaeos.valhallammo.utility.EntityUtils;
+import me.athlaeos.valhallammo.utility.HybridArmorFormula;
 import me.athlaeos.valhallammo.utility.ResistanceCalculator;
 import me.athlaeos.valhallammo.utility.StringUtils;
 import me.athlaeos.valhallammo.utility.Timer;
@@ -256,17 +257,28 @@ public class EntityDamagedListener implements Listener {
                 toughness *= armorEffectiveness;
             }
 
-            String scaling = c.getString("damage_formula_physical", "%damage% * (15 / (15 + %armor%)) - (%toughness% * 0.15)");
+            String scaling = c.getString("damage_formula_physical", "HYBRID");
             boolean mode = c.getString("damage_formula_mode", "SET").equalsIgnoreCase("set");
             double minimumFraction = c.getDouble("damage_reduction_cap");
             double damageAbsorption = AccumulativeStatManager.getCachedRelationalStats("DAMAGE_ABSORPTION", l, lastDamager, 10000, true);
+
+            // HYBRID returns actual post-armor damage, never a multiplier.
+            // Custom expressions retain the existing SET/MULTIPLY behavior.
+            if ("HYBRID".equalsIgnoreCase(scaling)) {
+                double damageResult = HybridArmorFormula.calculate(resistedDamage, totalArmor, toughness,
+                        c.getDouble("hybrid_armor_growth", 0.25),
+                        c.getDouble("hybrid_toughness_factor", 0.015));
+                return Math.max(damageResult - damageAbsorption, minimumFraction * resistedDamage);
+            }
             double damageResult = Utils.eval(scaling
                     .replace("%damage%", String.format("%.4f", resistedDamage))
                     .replace("%armor%", String.format("%.4f", totalArmor))
                     .replace("%toughness%", String.format("%.4f", toughness))
                     .replace("%absorption%", String.format("%.4f", damageAbsorption)));
 
-            if (mode) return Math.max(damageResult - damageAbsorption, minimumFraction * resistedDamage);
+            // Old formulas may already subtract %absorption%; never subtract twice.
+            if (mode) return Math.max(damageResult - (scaling.contains("%absorption%") ? 0 : damageAbsorption),
+                    minimumFraction * resistedDamage);
             else return resistedDamage * Math.max(minimumFraction, damageResult);
         } else {
             return resistedDamage;
