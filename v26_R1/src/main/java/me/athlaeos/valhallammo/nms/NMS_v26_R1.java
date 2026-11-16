@@ -337,7 +337,7 @@ public final class NMS_v26_R1 implements NMS {
             FoodComponent food = meta.getMeta().getFood();
             food.setCanAlwaysEat(canAlwaysEat);
             meta.getMeta().setFood(food);
-            if (!ValhallaMMO.getPaper() != null){
+            if (ValhallaMMO.getPaper() == null){
                 ConsumableComponent consumable = meta.getMeta().getConsumable();
                 consumable.setConsumeSeconds(eatTimeSeconds);
                 consumable.setAnimation(ConsumableComponent.Animation.EAT);
