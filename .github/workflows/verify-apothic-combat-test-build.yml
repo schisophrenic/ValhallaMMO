@@ -56,7 +56,7 @@ jobs:
   package-test-jar:
     needs: verify-combat
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -64,8 +64,20 @@ jobs:
           distribution: temurin
           java-version: '25'
           cache: maven
-      # Only package the NMS variants required by 26.x. Older Paper modules
-      # need unavailable ca.bkaw:paper-nms snapshots and are not used on 26.x.
+      # Spigot's patched server artifact is not published to remote Maven repos.
+      # For the 26.x test package build only this one server dependency locally.
+      # The compiled server artifact stays in the runner's Maven cache; it is
+      # not embedded in the resulting plugin artifact.
+      - name: Prepare Spigot 26.1 build dependency
+        run: |
+          mkdir -p /tmp/valhallammo-buildtools
+          curl -fL --retry 3 -o /tmp/valhallammo-buildtools/BuildTools.jar \
+            https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
+          (
+            cd /tmp/valhallammo-buildtools
+            java -Xmx4G -jar BuildTools.jar --rev 26.1
+          )
+          test -f "$HOME/.m2/repository/org/spigotmc/spigot/26.1-R0.1-SNAPSHOT/spigot-26.1-R0.1-SNAPSHOT.jar"
       - name: Build required Purpur 26 modules
         run: mvn -B -ntp -DskipTests -pl v26_R1 -am install
       - name: Shade Purpur 26 beta JAR
