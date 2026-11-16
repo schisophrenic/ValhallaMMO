@@ -175,6 +175,8 @@ public class PotionEffectRegistry {
         registerNewEffect(new GenericWrapper("BLEED_DURATION", (i) -> i >= 0, "\uEE0A", StatFormat.DIFFERENCE_TIME_SECONDS_BASE_20_P1).addModifier(Material.IRON_AXE, 20, 100));
         registerNewEffect(new GenericWrapper("CRIT_CHANCE", (i) -> i >= 0, "\uEE0B", StatFormat.DIFFERENCE_PERCENTILE_BASE_1_P1).addModifier(Material.GOLDEN_SWORD));
         registerNewEffect(new GenericWrapper("CRIT_DAMAGE", (i) -> i >= 0, "\uEE0C", StatFormat.DIFFERENCE_PERCENTILE_BASE_1_P1).addModifier(Material.IRON_SWORD));
+        registerNewEffect(new GenericWrapper("RESISTANCE_PIERCE", (i) -> i >= 0, "⚔", StatFormat.DIFFERENCE_PERCENTILE_BASE_1_P1));
+        registerNewEffect(new GenericWrapper("RESISTANCE_SHRED", (i) -> i >= 0, "✦", StatFormat.DIFFERENCE_PERCENTILE_BASE_1_P1));
         registerNewEffect(new GenericWrapper("ARMOR_PENETRATION_FLAT", (i) -> i >= 0, "\uEE0D", StatFormat.DIFFERENCE_FLOAT_P2).addModifier(Material.LEATHER_CHESTPLATE, 0.1, 1));
         registerNewEffect(new GenericWrapper("LIGHT_ARMOR_PENETRATION_FLAT", (i) -> i >= 0, "\uEE0E", StatFormat.DIFFERENCE_FLOAT_P2).addModifier(Material.CHAINMAIL_CHESTPLATE, 0.1, 1));
         registerNewEffect(new GenericWrapper("HEAVY_ARMOR_PENETRATION_FLAT", (i) -> i >= 0, "\uEE0F", StatFormat.DIFFERENCE_FLOAT_P2).addModifier(Material.IRON_CHESTPLATE, 0.1, 1));
