@@ -40,7 +40,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -363,9 +362,6 @@ public class EntityAttackListener implements Listener {
                             }
                         }
 
-                        double lifeSteal = AccumulativeStatManager.getCachedRelationalStats("LIFE_STEAL", v, trueDamager, 10000, true);
-                        double lifeStealValue = e.getDamage() * lifeSteal;
-
                         // custom power attack mechanics
                         double powerAttackMultiplier = 1;
                         // sweep attacks should not trigger custom power attack damage multipliers
@@ -402,19 +398,10 @@ public class EntityAttackListener implements Listener {
                             // dealing damage using the LivingEntity#damage(double, Entity) method suffers from inconsistencies
                             // such as attack cooldown. So we forcefully set the damage to the appropriate calculated amount
                             EntityUtils.damage(v, e.getDamager(), damage, pair.getOne().getType(), false);
-                            if (pair.getOne().canLifeSteal()) lifeStealValue += pair.getTwo() * lifeSteal;
                         }
 
                         EntityDamagedListener.setCustomDamageCause(v.getUniqueId(), originalCause.toString());
 
-                        if (lifeStealValue > 0 && trueDamager instanceof LivingEntity td && !EntityClassification.matchesClassification(v, EntityClassification.UNALIVE)){
-                            EntityRegainHealthEvent healEvent = new EntityRegainHealthEvent(td, lifeStealValue, EntityRegainHealthEvent.RegainReason.CUSTOM);
-                            ValhallaMMO.getInstance().getServer().getPluginManager().callEvent(healEvent);
-                            if (!healEvent.isCancelled()){
-                                AttributeInstance maxHealth = td.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-                                if (maxHealth != null) td.setHealth(Math.min(maxHealth.getValue(), td.getHealth() + lifeStealValue));
-                            }
-                        }
                     }, 2L);
                 }
             }
