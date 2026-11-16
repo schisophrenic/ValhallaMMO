@@ -75,9 +75,9 @@ jobs:
             https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
           (
             cd /tmp/valhallammo-buildtools
-            java -Xmx4G -jar BuildTools.jar --rev 26.1
+            java -Xmx4G -jar BuildTools.jar --rev 26.1.2
           )
-          test -f "$HOME/.m2/repository/org/spigotmc/spigot/26.1-R0.1-SNAPSHOT/spigot-26.1-R0.1-SNAPSHOT.jar"
+          test -f "$HOME/.m2/repository/org/spigotmc/spigot/26.1.2-R0.1-SNAPSHOT/spigot-26.1.2-R0.1-SNAPSHOT.jar"
       - name: Build required Purpur 26 modules
         run: mvn -B -ntp -DskipTests -pl v26_R1 -am install
       - name: Shade Purpur 26 beta JAR
