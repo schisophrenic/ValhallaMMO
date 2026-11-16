@@ -40,7 +40,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -301,10 +300,19 @@ public class EntityAttackListener implements Listener {
                 if (/*attackCooldown >= 0.9 && */(cause == null || !cause.equals("BLEED")) && (!(trueDamager instanceof Player p) || !WorldGuardHook.inDisabledRegion(v.getLocation(), p, WorldGuardHook.VMMO_COMBAT_CRIT))){
                     double critChanceResistance = AccumulativeStatManager.getCachedRelationalStats("CRIT_CHANCE_RESISTANCE", v, e.getDamager(), 10000, true);
                     double critChance = AccumulativeStatManager.getCachedRelationalStats("CRIT_CHANCE", v, e.getDamager(), 10000, true) * (1 - critChanceResistance);
-                    if (critNextAttack.contains(trueDamager.getUniqueId()) || Utils.proc(critChance, damagerLuck - victimLuck, false)) {
+                    boolean forcedCrit = critNextAttack.contains(trueDamager.getUniqueId());
+                    boolean multiCritEnabled = ValhallaMMO.getPluginConfig().getBoolean("apothic_multicrit_enabled", true);
+                    int critHits = multiCritEnabled
+                            ? MultiCritCalculator.rollCount(critChance, forcedCrit,
+                            ValhallaMMO.getPluginConfig().getInt("apothic_multicrit_max_hits", 5),
+                            chance -> Utils.proc(chance, damagerLuck - victimLuck, false))
+                            : (forcedCrit || Utils.proc(critChance, damagerLuck - victimLuck, false) ? 1 : 0);
+                    if (critHits > 0) {
                         critNextAttack.remove(trueDamager.getUniqueId());
                         double critDamageResistance = AccumulativeStatManager.getCachedRelationalStats("CRIT_DAMAGE_RESISTANCE", v, e.getDamager(), 10000, true);
                         double critDamage = 1 + (AccumulativeStatManager.getCachedRelationalStats("CRIT_DAMAGE", v, e.getDamager(), 10000, true) * (1 - critDamageResistance));
+                        if (multiCritEnabled) critDamage = MultiCritCalculator.multiplier(critDamage, critHits,
+                                ValhallaMMO.getPluginConfig().getDouble("apothic_multicrit_diminishing", 0.85));
                         EntityCriticallyHitEvent event = new EntityCriticallyHitEvent(v, e.getDamager(), combatType, e.getDamage(), critDamage);
                         ValhallaMMO.getInstance().getServer().getPluginManager().callEvent(event);
                         if (!event.isCancelled()){
@@ -354,9 +362,6 @@ public class EntityAttackListener implements Listener {
                             }
                         }
 
-                        double lifeSteal = AccumulativeStatManager.getCachedRelationalStats("LIFE_STEAL", v, trueDamager, 10000, true);
-                        double lifeStealValue = e.getDamage() * lifeSteal;
-
                         // custom power attack mechanics
                         double powerAttackMultiplier = 1;
                         // sweep attacks should not trigger custom power attack damage multipliers
@@ -393,19 +398,10 @@ public class EntityAttackListener implements Listener {
                             // dealing damage using the LivingEntity#damage(double, Entity) method suffers from inconsistencies
                             // such as attack cooldown. So we forcefully set the damage to the appropriate calculated amount
                             EntityUtils.damage(v, e.getDamager(), damage, pair.getOne().getType(), false);
-                            if (pair.getOne().canLifeSteal()) lifeStealValue += pair.getTwo() * lifeSteal;
                         }
 
                         EntityDamagedListener.setCustomDamageCause(v.getUniqueId(), originalCause.toString());
 
-                        if (lifeStealValue > 0 && trueDamager instanceof LivingEntity td && !EntityClassification.matchesClassification(v, EntityClassification.UNALIVE)){
-                            EntityRegainHealthEvent healEvent = new EntityRegainHealthEvent(td, lifeStealValue, EntityRegainHealthEvent.RegainReason.CUSTOM);
-                            ValhallaMMO.getInstance().getServer().getPluginManager().callEvent(healEvent);
-                            if (!healEvent.isCancelled()){
-                                AttributeInstance maxHealth = td.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-                                if (maxHealth != null) td.setHealth(Math.min(maxHealth.getValue(), td.getHealth() + lifeStealValue));
-                            }
-                        }
                     }, 2L);
                 }
             }

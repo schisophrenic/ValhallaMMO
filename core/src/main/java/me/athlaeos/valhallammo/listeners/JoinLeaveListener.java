@@ -20,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Collection;
@@ -37,6 +38,7 @@ public class JoinLeaveListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
+        applyHealthBarScaling(player);
         EntityCache.getAndCacheProperties(player);
         PotionEffectRegistry.updatePlayerAffectedStatus(player);
         ProfileRegistry.getPersistence().requestProfile(player.getUniqueId());
@@ -44,7 +46,9 @@ public class JoinLeaveListener implements Listener {
         PlayerMenuUtilManager.removePlayerMenuUtility(player.getUniqueId());
 
         ValhallaMMO.getInstance().getServer().getScheduler().runTaskLater(ValhallaMMO.getInstance(), () -> {
+            if (!player.isOnline()) return;
             EntityAttributeStats.updateStats(player);
+            applyHealthBarScaling(player);
             FlightReward.setFlight(player, true);
 
             double health = player.getPersistentDataContainer().getOrDefault(HEALTH, PersistentDataType.DOUBLE, -1D);
@@ -76,5 +80,21 @@ public class JoinLeaveListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onDimensionChange(PlayerChangedWorldEvent e){
         FlightReward.setFlight(e.getPlayer(), true);
+        applyHealthBarScaling(e.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerRespawn(PlayerRespawnEvent e) {
+        Player player = e.getPlayer();
+        ValhallaMMO.getInstance().getServer().getScheduler().runTask(ValhallaMMO.getInstance(), () -> {
+            if (player.isOnline()) applyHealthBarScaling(player);
+        });
+    }
+
+    /** Keeps 100+ actual health points in a single 10-heart client HUD row. */
+    private static void applyHealthBarScaling(Player player) {
+        if (!ValhallaMMO.getPluginConfig().getBoolean("health_bar_scaling_enabled", true)) return;
+        player.setHealthScaled(true);
+        player.setHealthScale(20.0);
     }
 }

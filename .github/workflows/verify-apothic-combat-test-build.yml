@@ -1,0 +1,118 @@
+name: Verify Apothic Combat and Package Test JAR
+
+on:
+  push:
+    branches:
+      - feature/apotheosis-attributes-integration
+      - integration/valhallammo-combined-26-3
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-combat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Run standalone combat calculation tests
+        run: |
+          mkdir -p /tmp/valhalla-combat-tests
+          javac -d /tmp/valhalla-combat-tests \
+            core/src/main/java/me/athlaeos/valhallammo/utility/ResistanceCalculator.java \
+            core/src/main/java/me/athlaeos/valhallammo/utility/MultiCritCalculator.java \
+            core/src/main/java/me/athlaeos/valhallammo/utility/HybridArmorFormula.java \
+            core/src/test/java/me/athlaeos/valhallammo/utility/ResistanceCalculatorTest.java \
+            core/src/test/java/me/athlaeos/valhallammo/utility/MultiCritCalculatorTest.java \
+            core/src/test/java/me/athlaeos/valhallammo/utility/HybridArmorFormulaTest.java
+          for test in ResistanceCalculatorTest MultiCritCalculatorTest HybridArmorFormulaTest; do
+            java -cp /tmp/valhalla-combat-tests me.athlaeos.valhallammo.utility."$test"
+          done
+      - name: Validate test configuration, translations, and armor effectiveness
+        run: |
+          python3 - <<'PY'
+          import json, re
+          from pathlib import Path
+          cfg = Path('core/src/main/resources/config.yml').read_text()
+          mapping = dict((key, float(value)) for key, value in re.findall(r'^\s+- ([A-Z_]+):([\d.]+)', cfg, re.M))
+          expected = {
+              'MELEE': 1.0, 'BLUDGEONING': .8,
+              'LIGHTNING': .25, 'FREEZING': .25, 'FIRE': .25, 'BLEED': .25,
+              'POISON': .1, 'NECROTIC': .1, 'EXPLOSION': .1, 'RADIANT': .1,
+              'MAGIC': .05, 'PROJECTILE': .05, 'FALLING': 1.0,
+          }
+          assert mapping == expected, (mapping, expected)
+          assert cfg.count('health_bar_scaling_enabled:') == 1
+          assert 'damage_formula_physical: HYBRID' in cfg
+          lang = json.loads(Path('core/src/main/resources/languages/en-us.json').read_text())
+          for name in ('ghost_health', 'overheal', 'resistance_shred', 'resistance_pierce'):
+              assert lang['stringTranslations']['attribute_' + name], name
+          print('PASS: armor type mapping, hybrid preset, unique HUD key, four new attributes')
+          PY
+
+      - name: Verify combined features and preservation of existing server files
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          mob = Path('core/src/main/resources/mob_stats.yml').read_text()
+          assert mob.splitlines()[0].startswith('enabled: false')
+          startup = Path('core/src/main/java/me/athlaeos/valhallammo/ValhallaMMO.java').read_text()
+          assert 'registerListener(new EnchantmentPriorityListener());' in startup
+          assert 'return ConfigManager.getConfig(name).get();' in startup
+          assert 'updateConfig(config);' not in startup
+          assert 'updateConfig(config, excludedSections);' not in startup
+          assert Path('tools/skill-tree/skill-tree-layout.json').is_file()
+          assert Path('server-config/items.json').is_file()
+          print('PASS: all integrations present; existing config files are not rewritten on startup')
+          PY
+
+  package-test-jar:
+    needs: verify-combat
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      # Spigot's patched server artifact is not published to remote Maven repos.
+      # For the 26.x test package build only this one server dependency locally.
+      # The compiled server artifact stays in the runner's Maven cache; it is
+      # not embedded in the resulting plugin artifact.
+      - name: Prepare Spigot 26.1 build dependency
+        run: |
+          mkdir -p /tmp/valhallammo-buildtools
+          curl -fL --retry 3 -o /tmp/valhallammo-buildtools/BuildTools.jar \
+            https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
+          (
+            cd /tmp/valhallammo-buildtools
+            java -Xmx4G -jar BuildTools.jar --rev 26.1.2
+          )
+          test -f "$HOME/.m2/repository/org/spigotmc/spigot/26.1.2-R0.1-SNAPSHOT/spigot-26.1.2-R0.1-SNAPSHOT.jar"
+      - name: Build required Purpur 26 modules
+        run: mvn -B -ntp -DskipTests -pl v26_R1 -am install
+      - name: Shade Purpur 26 beta JAR
+        run: mvn -B -ntp -DskipTests -f dist-purpur26/pom.xml package
+      - name: Check assembled beta plugin classes
+        run: |
+          JAR=dist-purpur26/target/ValhallaMMO_Purpur26_Apothic_Beta.jar
+          jar tf "$JAR" | grep -q 'me/athlaeos/valhallammo/ValhallaMMO.class'
+          jar tf "$JAR" | grep -q 'me/athlaeos/valhallammo/nms/NMS_v26_R1.class'
+          jar tf "$JAR" | grep -q 'plugin.yml'
+          jar tf "$JAR" | grep -q 'me/athlaeos/valhallammo/listeners/EnchantmentPriorityListener.class'
+          jar tf "$JAR" | grep -q 'mob_stats.yml'
+          jar tf "$JAR" | grep -q 'skills/enchanting_progression.yml'
+      - name: Publish test JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: valhallammo-purpur26-merged-runnable
+          path: dist-purpur26/target/ValhallaMMO_Purpur26_Apothic_Beta.jar
+          if-no-files-found: error
+          retention-days: 14

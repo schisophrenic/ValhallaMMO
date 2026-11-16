@@ -56,6 +56,8 @@ public class ItemAttributesRegistry {
         register(new AttributeDisplayWrapper("CRIT_CHANCE", StatFormat.PERCENTILE_BASE_1_P1, "\uEE0B", (i) -> i >= 0).addModifier(Material.GOLDEN_SWORD));
         register(new AttributeDisplayWrapper("CRIT_DAMAGE", StatFormat.PERCENTILE_BASE_1_P1, "\uEE0C", (i) -> i >= 0).addModifier(Material.IRON_SWORD));
         register(new AttributeDisplayWrapper("ARMOR_PENETRATION_FLAT", StatFormat.FLOAT_P2, "\uEE0D", (i) -> i >= 0).addModifier(Material.LEATHER_CHESTPLATE, 0.1, 1));
+        register(new AttributeDisplayWrapper("RESISTANCE_PIERCE", StatFormat.PERCENTILE_BASE_1_P1, "⚔", (i) -> i >= 0));
+        register(new AttributeDisplayWrapper("RESISTANCE_SHRED", StatFormat.PERCENTILE_BASE_1_P1, "✦", (i) -> i >= 0));
         register(new AttributeDisplayWrapper("LIGHT_ARMOR_PENETRATION_FLAT", StatFormat.FLOAT_P2, "\uEE0E", (i) -> i >= 0).addModifier(Material.CHAINMAIL_CHESTPLATE, 0.1, 1));
         register(new AttributeDisplayWrapper("HEAVY_ARMOR_PENETRATION_FLAT", StatFormat.FLOAT_P2, "\uEE0F", (i) -> i >= 0).addModifier(Material.IRON_CHESTPLATE, 0.1, 1));
         register(new AttributeDisplayWrapper("ARMOR_PENETRATION_FRACTION", StatFormat.PERCENTILE_BASE_1_P1, "\uEE10", (i) -> i >= 0).addModifier(Material.LEATHER_CHESTPLATE));
@@ -93,6 +95,12 @@ public class ItemAttributesRegistry {
         register(new AttributeDisplayWrapper("ALCHEMY_QUALITY_FRACTION", StatFormat.PERCENTILE_BASE_1_P1, "\uEE30", (i) -> i >= 0).addModifier(Material.BREWING_STAND));
         register(new AttributeDisplayWrapper("ENCHANTING_QUALITY", StatFormat.INT, "\uEE31", (i) -> i >= 0).addModifier(Material.ENCHANTING_TABLE, 1, 10));
         register(new AttributeDisplayWrapper("ENCHANTING_QUALITY_FRACTION", StatFormat.PERCENTILE_BASE_1_P1, "\uEE32", (i) -> i >= 0).addModifier(Material.ENCHANTING_TABLE));
+        // Apotheosis-inspired table stats in points. Registered for custom
+        // equipment/trinket modifiers; no default randomized gear rolls.
+        // Do not register them as enchantment levels or vanilla attributes.
+        register(new AttributeDisplayWrapper("ENCHANTING_ETERNA", StatFormat.FLOAT_P2, "✦", (i) -> i >= 0));
+        register(new AttributeDisplayWrapper("ENCHANTING_QUANTA", StatFormat.FLOAT_P2, "✧", (i) -> i >= 0));
+        register(new AttributeDisplayWrapper("ENCHANTING_ARCANA", StatFormat.FLOAT_P2, "✶", (i) -> i >= 0));
         register(new AttributeDisplayWrapper("ANVIL_QUALITY_FLAT", StatFormat.INT, "\uEE33", (i) -> i >= 0).addModifier(Material.ANVIL, 1, 10));
         register(new AttributeDisplayWrapper("ANVIL_QUALITY_FRACTION", StatFormat.PERCENTILE_BASE_1_P1, "\uEE34", (i) -> i >= 0).addModifier(Material.ANVIL));
         register(new AttributeDisplayWrapper("BREWING_INGREDIENT_CONSUMPTION", StatFormat.PERCENTILE_BASE_1_P1, "\uEE35", (i) -> i <= 0).addModifier(Material.GLASS_BOTTLE));
@@ -186,6 +194,8 @@ public class ItemAttributesRegistry {
 
         register(new AttributeDisplayWrapper("ATTACK_REACH_MULTIPLIER", StatFormat.PERCENTILE_BASE_1_P1, "\uEE9D", (i) -> i >= 0).addModifier(Material.ENDER_PEARL, 0.1, 1));
         register(new AttributeDisplayWrapper("SHIELD_DISARMING", StatFormat.DIFFERENCE_TIME_SECONDS_BASE_20_P1, "\uEE9E", (i) -> i >= 0).addModifier(Material.NETHERITE_AXE, 1, 10));
+        register(new AttributeDisplayWrapper("OVERHEAL", StatFormat.PERCENTILE_BASE_1_P1, "✚", (i) -> i >= 0));
+        register(new AttributeDisplayWrapper("GHOST_HEALTH", StatFormat.FLOAT_P2, "✧", (i) -> i >= 0));
         register(new AttributeDisplayWrapper("LIFE_STEAL", StatFormat.PERCENTILE_BASE_1_P2, "\uEE9F", (i) -> i >= 0).addModifier(Material.GHAST_TEAR, 0.001, 0.01));
         register(new AttributeDisplayWrapper("PVP_RESISTANCE", StatFormat.PERCENTILE_BASE_1_P1, "\uEEA3", (i) -> i >= 0).addModifier(Material.IRON_CHESTPLATE));
         register(new AttributeDisplayWrapper("DAMAGE_PLAYER", StatFormat.PERCENTILE_BASE_1_P1, "\uEEA4", (i) -> i >= 0).addModifier(Material.IRON_SWORD));

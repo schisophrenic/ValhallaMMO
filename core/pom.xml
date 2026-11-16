@@ -65,11 +65,7 @@
             <id>craftengine</id>
             <url>https://repo.momirealms.net/releases/</url>
         </repository>
-        <repository>
-            <id>aestrus-releases</id>
-            <name>Aestrus's Repository</name>
-            <url>https://maven.aestrus.io/releases</url>
-        </repository>
+
     </repositories>
 
     <dependencies>
@@ -206,9 +202,10 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>dev.lone</groupId>
-            <artifactId>api-itemsadder</artifactId>
-            <version>4.0.10</version>
+            <!-- Official API is now published on Maven Central, not maven.devs.beer. -->
+            <groupId>beer.devs</groupId>
+            <artifactId>itemsadder-api</artifactId>
+            <version>4.0.17</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

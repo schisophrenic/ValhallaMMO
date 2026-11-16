@@ -1,0 +1,50 @@
+name: Test ValhallaMMO Enchantment Priority Fallback BETA
+
+on:
+  push:
+    branches:
+      - feature/enchantment-priority-compat-26-3
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Compile core and dependencies (beta)
+        run: |
+          set -o pipefail
+          mvn -B -ntp -pl dist -am -DskipTests -Dgpg.skip=true clean package 2>&1 | tee priority-maven-build.log
+      - name: Stage full plugin test JAR
+        run: |
+          test -f core/target/classes/me/athlaeos/valhallammo/listeners/EnchantmentPriorityListener.class
+          mkdir -p dist-test
+          find target -maxdepth 1 -name 'ValhallaMMO_*.jar' -size +0c -print
+          jarfile=$(find target -maxdepth 1 -name 'ValhallaMMO_*.jar' -size +0c | head -n 1)
+          test -n "$jarfile"
+          jar tf "$jarfile" | grep -F 'me/athlaeos/valhallammo/listeners/EnchantmentPriorityListener.class'
+          cp "$jarfile" dist-test/ValhallaMMO_Enchantment_Priority_BETA.jar
+      - name: Upload runnable beta plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: ValhallaMMO-Enchantment-Priority-BETA
+          path: dist-test/ValhallaMMO_Enchantment_Priority_BETA.jar
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload Maven diagnostics if build fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ValhallaMMO-Priority-Build-Logs
+          path: priority-maven-build.log
+          if-no-files-found: ignore
+          retention-days: 7

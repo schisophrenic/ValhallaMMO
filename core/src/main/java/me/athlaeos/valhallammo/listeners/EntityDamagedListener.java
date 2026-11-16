@@ -11,6 +11,8 @@ import me.athlaeos.valhallammo.playerstats.profiles.ProfileCache;
 import me.athlaeos.valhallammo.playerstats.profiles.implementations.PowerProfile;
 import me.athlaeos.valhallammo.potioneffects.EffectResponsibility;
 import me.athlaeos.valhallammo.utility.EntityUtils;
+import me.athlaeos.valhallammo.utility.HybridArmorFormula;
+import me.athlaeos.valhallammo.utility.ResistanceCalculator;
 import me.athlaeos.valhallammo.utility.StringUtils;
 import me.athlaeos.valhallammo.utility.Timer;
 import me.athlaeos.valhallammo.utility.Utils;
@@ -124,6 +126,8 @@ public class EntityDamagedListener implements Listener {
                 applyImmunity = true;
             }
             if (e instanceof EntityDamageByEntityEvent && e.getFinalDamage() <= 0.000001 && l instanceof Player p && p.isBlocking()) return; // blocking with shield damage reduction
+            CombatShields shields = ValhallaMMO.getInstance().getCombatShields();
+            if (shields != null && customDamage > 0) shields.markHit(l);
 
             if (Timer.isCooldownPassed(e.getEntity().getUniqueId(), "cooldown_oneshot_protection") && ((lastDamager == null || EntityClassification.matchesClassification(lastDamager.getType(), EntityClassification.UNALIVE)) && environmentalOneShotProtection) || ((pvpOneShotProtection && lastDamager instanceof Player) || (pveOneShotProtection && lastDamager != null && !EntityClassification.matchesClassification(lastDamager.getType(), EntityClassification.UNALIVE)))) {
                 double oneShotProtectionFraction = AccumulativeStatManager.getCachedRelationalStats("ONESHOT_PROTECTION_FRACTION", l, lastDamager, 10000, true);
@@ -147,14 +151,30 @@ public class EntityDamagedListener implements Listener {
                 }
             }
 
+            // Let normal golden absorption go first, then virtual ghost health,
+            // then the player's real HP. This does not bypass armor/resistances.
+            double currentAbsorption = absorptionTracker.getOrDefault(l.getUniqueId(), l.getAbsorptionAmount());
+            double wouldHitHealth = Math.max(0, customDamage - Math.max(0, currentAbsorption));
+            if (shields != null && wouldHitHealth > 0 && !trueDamage.contains(damageCause)) {
+                double afterGhost = shields.absorbGhost(l, wouldHitHealth);
+                customDamage -= wouldHitHealth - afterGhost;
+            }
+            if (customDamage <= 0) e.setDamage(0);
+            applyImmunity = applyImmunity || l.getHealth() + currentAbsorption > customDamage;
+
             final double damage = customDamage;
             if (applyImmunity){
                 double iFrameMultiplier = 1 + AccumulativeStatManager.getCachedRelationalStats("IMMUNITY_FRAME_MULTIPLIER", l, lastDamager, 10000, true);
                 int iFrameBonus = (int) AccumulativeStatManager.getCachedRelationalStats("IMMUNITY_FRAME_BONUS", l, lastDamager, 10000, true);
                 int iFrames = isMarkedNoImmunityOnNextDamageInstance(l, damageCause) ? 0 : (int) Math.max(0, iFrameMultiplier * (Math.max(0, 10 + iFrameBonus)));
                 unmarkNextDamageInstanceNoImmunity(l, damageCause);
-                double predictedAbsorption = absorptionTracker.getOrDefault(l.getUniqueId(), l.getAbsorptionAmount()) - damage;
-                double predictedHealth = healthTracker.getOrDefault(l.getUniqueId(), l.getHealth()) - (predictedAbsorption >= 0 ? 0 : -predictedAbsorption);
+                double startingHealth = healthTracker.getOrDefault(l.getUniqueId(), l.getHealth());
+                double predictedAbsorption = currentAbsorption - damage;
+                double predictedHealth = startingHealth - (predictedAbsorption >= 0 ? 0 : -predictedAbsorption);
+                if (shields != null && type != null && type.canLifeSteal()
+                        && lastDamager instanceof LivingEntity attacker && !EntityClassification.matchesClassification(l.getType(), EntityClassification.UNALIVE)) {
+                    shields.recordDamage(l, attacker, Math.min(startingHealth, Math.max(0, startingHealth - predictedHealth)));
+                }
                 if (predictedAbsorption > 0) absorptionTracker.put(l.getUniqueId(), predictedAbsorption);
                 healthTracker.put(l.getUniqueId(), predictedHealth); // if two damage instances occur in rapid succession (such as with bonus damage types)
                 // then the predicted health of the entity is recorded and used for additional damage instances. Without this, preceding damage instances
@@ -172,6 +192,7 @@ public class EntityDamagedListener implements Listener {
                         l.setAbsorptionAmount(Math.max(0, predictedAbsorption));
                         l.setHealth(Math.max(damageCause.equals("POISON") ? 1 : 0, Math.min(maxHealth, predictedHealth)));
                     }
+                    if (shields != null) shields.finishDamage(l, Math.max(0, healthBefore - l.getHealth()));
                     customDamageCauses.remove(l.getUniqueId());
                     healthTracker.remove(l.getUniqueId());
                     absorptionTracker.remove(l.getUniqueId());
@@ -180,6 +201,15 @@ public class EntityDamagedListener implements Listener {
                 ValhallaMMO.getInstance().getServer().getScheduler().runTaskLater(ValhallaMMO.getInstance(), () -> {
                     Runnable r = damageProcesses.get(l.getUniqueId());
                     if (r != null) r.run();
+                }, 1L);
+            } else if (shields != null && type != null && type.canLifeSteal()
+                    && lastDamager instanceof LivingEntity attacker && !EntityClassification.matchesClassification(l.getType(), EntityClassification.UNALIVE)) {
+                // Fatal hits are processed by vanilla. Only credit HP that was
+                // actually lost, after other plugins have handled the event.
+                final double healthBeforeFatalHit = l.getHealth();
+                ValhallaMMO.getInstance().getServer().getScheduler().runTaskLater(ValhallaMMO.getInstance(), () -> {
+                    if (!e.isCancelled()) shields.recover(attacker, l,
+                            Math.max(0, healthBeforeFatalHit - l.getHealth()));
                 }, 1L);
             }
         }
@@ -196,20 +226,22 @@ public class EntityDamagedListener implements Listener {
 
         CustomDamageType customDamageType = CustomDamageType.getCustomType(damageCause);
 
-        if (customDamageType != null) {
-            if (e.getEntity() instanceof LivingEntity l){
-                double resistance = customDamageType.resistance() == null ? 0 : AccumulativeStatManager.getCachedRelationalStats(customDamageType.resistance(), l, lastDamager, 10000, true);
-                e.setDamage(Math.max(0, e.getDamage() * (1 - resistance)));
-            }
-        }
+        if (!(e.getEntity() instanceof LivingEntity l)) return e.getDamage();
 
-        if (e.getEntity() instanceof LivingEntity l){
-            if (!trueDamage.contains(damageCause)){
-                double generalResistance = AccumulativeStatManager.getCachedRelationalStats("DAMAGE_RESISTANCE", l, lastDamager, 10000, true);
-                e.setDamage(Math.max(0, e.getDamage() * (1 - generalResistance)));
-            }
-        } else return e.getDamage();
+        double typeResistance = customDamageType == null || customDamageType.resistance() == null ? 0
+                : AccumulativeStatManager.getCachedRelationalStats(customDamageType.resistance(), l, lastDamager, 10000, true);
+        boolean trueDamageType = trueDamage.contains(damageCause);
+        double generalResistance = trueDamageType ? 0
+                : AccumulativeStatManager.getCachedRelationalStats("DAMAGE_RESISTANCE", l, lastDamager, 10000, true);
 
+        // Resistances keep their original stacking when the attacker has no penetration.
+        // True/environmental damage is not strengthened by a weapon's penetration stat.
+        double shred = trueDamageType || lastDamager == null ? 0
+                : AccumulativeStatManager.getCachedRelationalStats("RESISTANCE_SHRED", l, lastDamager, 10000, true);
+        double pierce = trueDamageType || lastDamager == null ? 0
+                : AccumulativeStatManager.getCachedRelationalStats("RESISTANCE_PIERCE", l, lastDamager, 10000, true);
+        e.setDamage(Math.max(0, e.getDamage() *
+                ResistanceCalculator.damageMultiplier(typeResistance, generalResistance, shred, pierce)));
 
         double resistedDamage = e.getDamage();
         YamlConfiguration c = ValhallaMMO.getPluginConfig();
@@ -226,17 +258,28 @@ public class EntityDamagedListener implements Listener {
                 toughness *= armorEffectiveness;
             }
 
-            String scaling = c.getString("damage_formula_physical", "%damage% * (15 / (15 + %armor%)) - (%toughness% * 0.15)");
+            String scaling = c.getString("damage_formula_physical", "HYBRID");
             boolean mode = c.getString("damage_formula_mode", "SET").equalsIgnoreCase("set");
             double minimumFraction = c.getDouble("damage_reduction_cap");
             double damageAbsorption = AccumulativeStatManager.getCachedRelationalStats("DAMAGE_ABSORPTION", l, lastDamager, 10000, true);
+
+            // HYBRID returns actual post-armor damage, never a multiplier.
+            // Custom expressions retain the existing SET/MULTIPLY behavior.
+            if ("HYBRID".equalsIgnoreCase(scaling)) {
+                double damageResult = HybridArmorFormula.calculate(resistedDamage, totalArmor, toughness,
+                        c.getDouble("hybrid_armor_growth", 0.25),
+                        c.getDouble("hybrid_toughness_factor", 0.015));
+                return Math.max(damageResult - damageAbsorption, minimumFraction * resistedDamage);
+            }
             double damageResult = Utils.eval(scaling
                     .replace("%damage%", String.format("%.4f", resistedDamage))
                     .replace("%armor%", String.format("%.4f", totalArmor))
                     .replace("%toughness%", String.format("%.4f", toughness))
                     .replace("%absorption%", String.format("%.4f", damageAbsorption)));
 
-            if (mode) return Math.max(damageResult - damageAbsorption, minimumFraction * resistedDamage);
+            // Old formulas may already subtract %absorption%; never subtract twice.
+            if (mode) return Math.max(damageResult - (scaling.contains("%absorption%") ? 0 : damageAbsorption),
+                    minimumFraction * resistedDamage);
             else return resistedDamage * Math.max(minimumFraction, damageResult);
         } else {
             return resistedDamage;
