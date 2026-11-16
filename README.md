@@ -59,7 +59,29 @@ To install it, download the jar in the releases and insert it into your plugins 
 If you want the resource pack, execute the "/val resourcepack setup" command to install it on your server.
 The plugin works on Spigot and its forks, on version 1.19 and above. 
 
-# Maven
+## Project layout and building
+
+This is one plugin split into compatibility modules, **not separate plugins**.
+The root `pom.xml` groups those modules logically while keeping the original
+paths compatible with existing Maven builds.
+
+- `core/`: shared gameplay, skills, items and configuration.
+- `v1_*/` and `v26_*/`: Minecraft-version implementations.
+- `paper1_*/`: Paper-specific implementations.
+- `dist/`: produces the single shaded ValhallaMMO plugin JAR.
+
+Build the distributable plugin with Maven from the repository root:
+
+```bash
+mvn -B -ntp -pl dist -am -DskipTests package
 ```
-not implemented yet
-```
+
+The distributable is written to the root `target/` directory
+(`ValhallaMMO_*.jar`). Only install that final shaded plugin JAR on your
+server; do not install JARs from the internal modules separately.
+
+The version-specific source trees have intentionally **not** been merged
+into `core/`: they compile against different Minecraft/Paper APIs. A
+physical directory move needs a separate, validated Maven relocation
+updating module paths, parent POM relative paths and version build tooling.
+
