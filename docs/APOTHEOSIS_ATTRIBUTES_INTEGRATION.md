@@ -81,3 +81,59 @@ Use real Paper **and** Purpur servers, with compatible Java runtimes:
 ## Licensing
 
 The upstream [Apothic Attributes LICENSE](https://github.com/Shadows-of-Fire/Apothic-Attributes/blob/26.1/LICENSE) is MIT. If actual upstream implementation code is copied or adapted, retain the required copyright and permission notice. This document summarizes concepts and does not copy implementation code.
+
+
+## Eterna / Quanta / Arcana: Enchanting perk stats (implemented scaffold, November 2026)
+
+The **ValhallaMMO stat-layer implementation** for Apothic Enchanting now exists
+in this branch. It intentionally does **not** implement shelf scanning, enchanting
+offer power/RNG, the NeoForge mod, or any automatic changes to enchant results.
+Those belong in the separate EnchantsSquared Apotheosis integration branch.
+
+| Stat read by EnchantsSquared later | Item attribute | Enchanting-profile property | New default perk | Perk bonus |
+| --- | --- | --- | --- | ---: |
+| `ENCHANTING_ETERNA` | `ENCHANTING_ETERNA` | `apothicEterna` | `enchanting_perk_apothic_eterna` | +8 points |
+| `ENCHANTING_QUANTA` | `ENCHANTING_QUANTA` | `apothicQuanta` | `enchanting_perk_apothic_quanta` | +12 points |
+| `ENCHANTING_ARCANA` | `ENCHANTING_ARCANA` | `apothicArcana` | `enchanting_perk_apothic_arcana` | +15 points |
+
+The perks are connected in a short separate branch of the existing
+Enchanting progression:
+
+```
+Mental Focus (enchanting_perk_b1, level 20)
+  └─ Eterna Attunement, level 35, +8
+       └─ Quanta Attunement, level 55, +12
+            └─ Arcana Attunement, level 75, +15
+```
+
+One perk point per node. Their display names, descriptions, unlock messages,
+and gear-attribute lore are localized in `core/src/main/resources/languages/en-us.json`.
+New players get the bundled perk nodes from
+`core/src/main/resources/skills/enchanting_progression.yml`.
+The three profile stats produce reward IDs automatically via
+`Profile.registerPerkRewards()`: `enchanting_apothiceterna_add`,
+`enchanting_apothicquanta_add`, and `enchanting_apothicarcana_add`.
+
+Each stat is sourced from **the Enchanting profile + the matching item
+attribute** through `AccumulativeStatManager`. These are **flat points**,
+not percent multipliers and not replacements for
+`ENCHANTING_QUALITY`, `ENCHANTING_FRACTION_QUALITY` or
+`ENCHANTING_AMPLIFY_CHANCE`. They do not touch the NG tier perk graph,
+enchanting skill/quality calculations, enchantment evolution, or overlevel
+handling. A future EnchantsSquared bridge should read them explicitly and
+apply caps from its own integration configuration alongside shelf statistics,
+without applying player buffs twice.
+
+**Important existing-server migration:** ValhallaMMO's `save()` routine
+does not overwrite an existing `skills/enchanting_progression.yml`.
+Servers with custom trees must merge these three node definitions manually
+or using a verified skill-tree migration. Do not overwrite your current
+custom progression with the bundled defaults. The parallel
+`feature/skill-tree-config-overhaul` branch maintains a different redesigned
+tree layout; the three Apotheosis perk nodes need a separate layout sync to
+that planner before merging those branches. This task does not change that
+parallel skill-tree branch.
+
+**Next step:** implement block-derived Eterna/Quanta/Arcana and a deterministic
+enchanting roll bridge on the separate EnchantsSquared integration branch.
+That is when these player/item stats will begin influencing enchantments.
