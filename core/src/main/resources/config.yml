@@ -69,6 +69,11 @@ cooldown_status_duration: 100 # Duration (in ticks) for which the cooldown messa
 armor_scale: 40 # Defines the "maximum" armor displayed in the armor bar. Whatever number is defined here equals 10 full armor icons,
 # so by default 20 armor points will grant roughly 5 armor icons. Of course, players can still exceed this value, it will just not be displayed.
 
+# Cosmetic health HUD compression. Displays exactly 10 red hearts (one row) even with 100+ max HP.
+# This does not change actual health, maximum health, damage, or regeneration.
+# Disable if another plugin, such as AuraSkills, already manages Player health scaling.
+health_bar_scaling_enabled: true
+
 # The way boss bars are presented for active global buffs
 # Each global buff is presented for an amount of time, then continues to the next, and once all buffs are presented it clears the bar for
 # another period after which the cycle repeats
