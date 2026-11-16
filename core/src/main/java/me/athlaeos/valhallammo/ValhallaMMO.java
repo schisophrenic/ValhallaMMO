@@ -263,6 +263,7 @@ public class ValhallaMMO extends JavaPlugin {
         registerListener(new DeathListener());
         registerListener(new EnchantmentListener());
         registerListener(new EntityAttackListener());
+        registerListener(new EnchantmentPriorityListener());
         registerListener(new EntityDamagedListener());
         registerListener(new EntityResponsibilityListener());
         registerListener(new EntitySpawnListener());
