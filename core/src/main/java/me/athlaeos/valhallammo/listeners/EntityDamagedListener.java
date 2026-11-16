@@ -204,11 +204,12 @@ public class EntityDamagedListener implements Listener {
                 }, 1L);
             } else if (shields != null && type != null && type.canLifeSteal()
                     && lastDamager instanceof LivingEntity attacker && !EntityClassification.matchesClassification(l.getType(), EntityClassification.UNALIVE)) {
-                // Lethal hits are processed by vanilla rather than the delayed
-                // health tracker; credit the actual HP available, not raw damage.
-                final double possibleHealthDamage = Math.min(l.getHealth(), Math.max(0, damage - Math.max(0, currentAbsorption)));
+                // Fatal hits are processed by vanilla. Only credit HP that was
+                // actually lost, after other plugins have handled the event.
+                final double healthBeforeFatalHit = l.getHealth();
                 ValhallaMMO.getInstance().getServer().getScheduler().runTaskLater(ValhallaMMO.getInstance(), () -> {
-                    if (!e.isCancelled()) shields.recover(attacker, l, possibleHealthDamage);
+                    if (!e.isCancelled()) shields.recover(attacker, l,
+                            Math.max(0, healthBeforeFatalHit - l.getHealth()));
                 }, 1L);
             }
         }
