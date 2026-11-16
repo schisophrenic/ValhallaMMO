@@ -450,6 +450,8 @@
     "attribute_bleed_duration": "%icon%%value% Bleed Duration",
     "attribute_crit_chance": "%icon%%value% Crit Chance",
     "attribute_crit_damage": "%icon%%value% Crit Damage",
+    "attribute_resistance_pierce": "%icon%%value% Resistance Pierce",
+    "attribute_resistance_shred": "%icon%%value% Resistance Shred",
     "attribute_armor_penetration_flat": "%icon%%value% Armor Piercing",
     "attribute_light_armor_penetration_flat": "%icon%%value% Light Armor Piercing",
     "attribute_heavy_armor_penetration_flat": "%icon%%value% Heavy Armor Piercing",
