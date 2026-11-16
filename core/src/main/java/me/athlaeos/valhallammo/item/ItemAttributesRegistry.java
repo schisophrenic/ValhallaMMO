@@ -56,6 +56,8 @@ public class ItemAttributesRegistry {
         register(new AttributeDisplayWrapper("CRIT_CHANCE", StatFormat.PERCENTILE_BASE_1_P1, "\uEE0B", (i) -> i >= 0).addModifier(Material.GOLDEN_SWORD));
         register(new AttributeDisplayWrapper("CRIT_DAMAGE", StatFormat.PERCENTILE_BASE_1_P1, "\uEE0C", (i) -> i >= 0).addModifier(Material.IRON_SWORD));
         register(new AttributeDisplayWrapper("ARMOR_PENETRATION_FLAT", StatFormat.FLOAT_P2, "\uEE0D", (i) -> i >= 0).addModifier(Material.LEATHER_CHESTPLATE, 0.1, 1));
+        register(new AttributeDisplayWrapper("RESISTANCE_PIERCE", StatFormat.PERCENTILE_BASE_1_P1, "⚔", (i) -> i >= 0));
+        register(new AttributeDisplayWrapper("RESISTANCE_SHRED", StatFormat.PERCENTILE_BASE_1_P1, "✦", (i) -> i >= 0));
         register(new AttributeDisplayWrapper("LIGHT_ARMOR_PENETRATION_FLAT", StatFormat.FLOAT_P2, "\uEE0E", (i) -> i >= 0).addModifier(Material.CHAINMAIL_CHESTPLATE, 0.1, 1));
         register(new AttributeDisplayWrapper("HEAVY_ARMOR_PENETRATION_FLAT", StatFormat.FLOAT_P2, "\uEE0F", (i) -> i >= 0).addModifier(Material.IRON_CHESTPLATE, 0.1, 1));
         register(new AttributeDisplayWrapper("ARMOR_PENETRATION_FRACTION", StatFormat.PERCENTILE_BASE_1_P1, "\uEE10", (i) -> i >= 0).addModifier(Material.LEATHER_CHESTPLATE));
