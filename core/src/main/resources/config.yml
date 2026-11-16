@@ -69,6 +69,13 @@ cooldown_status_duration: 100 # Duration (in ticks) for which the cooldown messa
 armor_scale: 40 # Defines the "maximum" armor displayed in the armor bar. Whatever number is defined here equals 10 full armor icons,
 # so by default 20 armor points will grant roughly 5 armor icons. Of course, players can still exceed this value, it will just not be displayed.
 
+# HEALTH DISPLAY (visual only)
+# Display real max HP, including values above 100, as exactly ten red hearts in one row.
+# This does not change actual player health, healing, incoming damage, or the max-health attribute.
+# Disable this if AuraSkills or another plugin is responsible for scaling the health bar.
+# Extra golden absorption hearts are managed separately by Minecraft.
+health_bar_scaling_enabled: true
+
 # Cosmetic health HUD compression. Displays exactly 10 red hearts (one row) even with 100+ max HP.
 # This does not change actual health, maximum health, damage, or regeneration.
 # Disable if another plugin, such as AuraSkills, already manages Player health scaling.
