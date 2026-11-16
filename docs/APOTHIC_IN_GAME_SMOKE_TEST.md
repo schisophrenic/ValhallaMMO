@@ -5,7 +5,7 @@ Target server: **Purpur 26.3**, Java version appropriate for the server. Branch:
 ## Before you install
 
 1. **Use a copy of the server**, not the production world. Back up the original ValhallaMMO JAR, `plugins/ValhallaMMO/` and player data.
-2. Use the GitHub Actions workflow **Verify Apothic Combat and Package Test JAR**. Its first job validates pure Java damage calculations and config. Its second job attempts the full multi-module Maven build. **Only use an artifact if the packaging job succeeds**.
+2. Use the GitHub Actions workflow **Verify Apothic Combat and Package Test JAR**. Its first job validates pure Java damage calculations and config. Its second job uses **JDK 25**, required to compile against the WorldEdit 7.4.5-SNAPSHOT and WorldGuard 7.1.0-SNAPSHOT dependencies in this branch, and attempts the full multi-module Maven build. **Only use an artifact if the packaging job succeeds**.
 3. To build locally from repository root with existing NMS libraries and Maven: `mvn -B -ntp -DskipTests package`. The shaded distribution JAR comes from `target/ValhallaMMO*.jar`, **not** the core-only module JAR. Check for `me/athlaeos/valhallammo/nms/NMS_v26_R1.class` using `jar tf <file.jar>`.
 4. Stop the server. Replace the old ValhallaMMO JAR, ensuring only one ValhallaMMO version is loaded. Restart the server; do **not** use hot plugin reload.
 5. Update the existing `plugins/ValhallaMMO/config.yml` yourself; a plugin update might not overwrite previously saved settings. Preserve any unrelated custom settings.
