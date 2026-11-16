@@ -340,6 +340,11 @@ public class AccumulativeStatManager {
 
         register("ENCHANTING_QUALITY", new AttributeSource("ENCHANTING_QUALITY"), new PotionEffectSource("ENCHANTING_QUALITY"), new ProfileStatSource(EnchantingProfile.class, "enchantingSkill"), new GlobalBuffSource("enchanting_quality"), new PotionEffectSingleUseSource("ENCHANTING_MASTERPIECE_FLAT"));
         register("ENCHANTING_FRACTION_QUALITY", new AttributeSource("ENCHANTING_QUALITY_FRACTION"), new PotionEffectSource("ENCHANTING_QUALITY_FRACTION"), new ProfileStatSource(EnchantingProfile.class, "enchantingSkillFractionBonus"), new GlobalBuffSource("enchanting_quality"), new PotionEffectSingleUseSource("ENCHANTING_MASTERPIECE_FRACTION"));
+        // Independent Eterna, Quanta and Arcana channels for optional
+        // Apotheosis-style enchanting; ENCHANTING_QUALITY remains untouched.
+        register("ENCHANTING_ETERNA", new AttributeSource("ENCHANTING_ETERNA"), new ProfileStatSource(EnchantingProfile.class, "apothicEterna"));
+        register("ENCHANTING_QUANTA", new AttributeSource("ENCHANTING_QUANTA"), new ProfileStatSource(EnchantingProfile.class, "apothicQuanta"));
+        register("ENCHANTING_ARCANA", new AttributeSource("ENCHANTING_ARCANA"), new ProfileStatSource(EnchantingProfile.class, "apothicArcana"));
         register("ENCHANTING_QUALITY_ANVIL", new AttributeSource("ANVIL_QUALITY_FLAT"), new PotionEffectSource("ANVIL_QUALITY_FLAT"), new ProfileStatSource(EnchantingProfile.class, "anvilSkill"));
         register("ENCHANTING_FRACTION_QUALITY_ANVIL", new AttributeSource("ANVIL_QUALITY_FRACTION"), new PotionEffectSource("ANVIL_QUALITY_FRACTION"), new ProfileStatSource(EnchantingProfile.class, "anvilSkillFractionBonus"));
         register("ENCHANTING_AMPLIFY_CHANCE", new ProfileStatSource(EnchantingProfile.class, "enchantmentAmplificationChance"), new GlobalBuffSource("enchanting_amplify_chance"));
