@@ -79,6 +79,9 @@ public final class CombatShields implements Listener {
         // Pending HP-damage credit must survive death until Valhalla's queued
         // damage commit runs; setHealth(0) can fire this event synchronously.
         for (Map<UUID, Double> credits : pendingHealthDamage.values()) credits.remove(uuid);
+        // Remove any unclaimed credit after the delayed damage update.
+        plugin.getServer().getScheduler().runTaskLater(plugin,
+                () -> pendingHealthDamage.remove(uuid), 2L);
     }
 
     private void clear(UUID uuid) {
